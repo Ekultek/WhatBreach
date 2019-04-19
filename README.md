@@ -221,4 +221,16 @@ Installing is extremely easy, just run `pip install -r requirements.txt`
 
 # Why?
 
-During my time in information technology, during researching and doing OSINT, I have noticed a need to find email addresses as well as email address passwords. I have found reliable tools that do this successfully and make the process quick and easy, however I have not found a tool that meets my exact requirements. This tool is basically my own personal take on how I think email searching should work and ties in the database searching and database downloading as well. What better way to break into an email then to have the possible password as well as all _known_ breaches it's been seen in?
+During my time in information technology, during researching and doing OSINT, I have noticed a need to find email addresses as well as their password. I have found reliable tools that do this successfully and make the process quick and easy, however I have not found a tool that meets my exact requirements. This tool is basically my own personal take on how I think email searching should work and ties in the database searching and database downloading as well. What better way to break into an email then to have the possible password as well as all _known_ breaches it's been seen in?
+
+# TODO:/
+
+ - Add [domain searching](https://twitter.com/CryptoCypher/status/1119344370036113409) while using dehashed so that we can search for everything related to the domain instead of the specific breach
+ - Add the ability to use cookies so we can download out of dehashed
+ - Add a pretty banned, who doesn't like a pretty banner?
+ - Add more database searches
+ - Check the databases for hashes and verify the hash type, maybe store the hashes into a file for cracking?
+
+# Shoutouts
+
+ - [NullArray](https://github.com/NullArray) for providing me with the idea for the hash checking and the idea for the databases.today downloads, as well as being an awesome and supportive person at all times.
