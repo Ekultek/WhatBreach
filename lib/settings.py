@@ -4,22 +4,43 @@ import sys
 import platform
 
 
+# version number
 VERSION = "0.0.1"
+
+# home path
 HOME = "{}/.whatbreach_home".format(os.path.expanduser("~"))
+
+# where we gonna download this shit too?
 DOWNLOADS_PATH = "{}/downloads".format(HOME)
+
+# have you been pwned?!
 HIBP_URL = "https://haveibeenpwned.com/api/v2/breachedaccount/{}"
+
+# paste URL
 HIBP_PASTE_URL = "https://haveibeenpwned.com/api/v2/pasteaccount/{}"
+
+# dehashed search query
 DEHASHED_URL = "https://www.dehashed.com/search?query={}"
+
+# databases.tody URL
 DATABASES_URL = "https://databases.today/search-nojs.php?for={}"
+
+# our user agent because who doesn't love a good user agent?
 USER_AGENT = "Breach-Reporter/{} (Language={}; Platform={})".format(
     VERSION, sys.version.split(" ")[0], platform.platform().split("-")[0]
 )
+
+# default request headers
 DEFAULT_REQUEST_HEADERS = {
     "User-Agent": USER_AGENT,
     "Connection": "close",
     "Made-With-Love": "By Eku"
 }
+
+# a giant ass list of ten minute email extensions
 TEN_MINUTE_EMAIL_EXTENSION_LIST = "{}/etc/ten_minute_emails.lst".format(os.getcwd())
+
+# check if the results actually exist or not
 VERIFICATION_REGEX = re.compile("sensitive.data.available.but.hidden", re.I)
 
 
