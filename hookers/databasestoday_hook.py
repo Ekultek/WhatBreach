@@ -15,6 +15,7 @@ class DatabasesTodayHook(object):
 
     # thank you NullArray for this idea and being an all around badass
     # if you dunno him, go checkout his Github https://github.com/NullArray
+    # he practically invented being awesome!
 
     def __init__(self, query, proxies=False, headers=False):
         if not proxies:
