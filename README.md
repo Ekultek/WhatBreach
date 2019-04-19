@@ -227,7 +227,7 @@ During my time in information technology, during researching and doing OSINT, I 
 
  - Add [domain searching](https://twitter.com/CryptoCypher/status/1119344370036113409) while using dehashed so that we can search for everything related to the domain instead of the specific breach
  - Add the ability to use cookies so we can download out of dehashed
- - Add a pretty banned, who doesn't like a pretty banner?
+ - Add a pretty banner, who doesn't like a pretty banner?
  - Add more database searches
  - Check the databases for hashes and verify the hash type, maybe store the hashes into a file for cracking?
 
