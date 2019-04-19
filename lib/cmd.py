@@ -1,5 +1,7 @@
 import argparse
 
+import lib.settings
+
 
 class Parser(argparse.ArgumentParser):
 
@@ -37,6 +39,10 @@ class Parser(argparse.ArgumentParser):
         misc_opts.add_argument(
             "-d", "--download", action="store_true", default=False, dest="downloadDatabase",
             help="Attempt to download the database if there is one available"
+        )
+        misc_opts.add_argument(
+            "-s", "--save-dir", metavar="DIRECTORY-PATH", default=lib.settings.DOWNLOADS_PATH, dest="saveDirectory",
+            help="Pass a directory to save the downloaded databases into instead of the `HOME` path"
         )
         # easter egg, because we gotta keep it salty ya know
         misc_opts.add_argument(

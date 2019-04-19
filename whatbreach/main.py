@@ -5,6 +5,7 @@ from hookers.hibp_hook import BeenPwnedHook
 from hookers.dehashed_hook import DehashedHook
 from hookers.databasestoday_hook import DatabasesTodayHook
 from lib.settings import (
+    BANNER,
     display_found_databases,
     check_ten_minute_email,
     TEN_MINUTE_EMAIL_EXTENSION_LIST
@@ -18,6 +19,7 @@ from lib.formatter import (
 
 
 def main():
+    print(BANNER)
     try:
         opt = Parser().optparse()
 
@@ -81,7 +83,9 @@ def main():
                         for item in found_databases.keys():
                             if "Paste" not in item:
                                 info("searching for downloadable databases using query: {}".format(item.lower()))
-                                downloaded = DatabasesTodayHook(str(item)).hooker()
+                                downloaded = DatabasesTodayHook(
+                                    str(item), downloads_directory=opt.saveDirectory
+                                ).hooker()
                                 if len(downloaded) != 0:
                                     info(
                                         "downloaded a total of {} database(s) pertaining to query: {}".format(
@@ -109,7 +113,9 @@ def main():
                             for item in found_databases.keys():
                                 if "Paste" not in item:
                                     info("searching for downloadable databases using query: {}".format(item.lower()))
-                                    downloaded = DatabasesTodayHook(str(item)).hooker()
+                                    downloaded = DatabasesTodayHook(
+                                        str(item), downloads_directory=opt.saveDirectory
+                                    ).hooker()
                                     if len(downloaded) != 0:
                                         info(
                                             "downloaded a total of {} database(s) pertaining to query: {}".format(

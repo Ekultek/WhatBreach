@@ -17,7 +17,7 @@ class DatabasesTodayHook(object):
     # if you dunno him, go checkout his Github https://github.com/NullArray
     # he practically invented being awesome!
 
-    def __init__(self, query, proxies=False, headers=False):
+    def __init__(self, query, proxies=False, headers=False, **kwargs):
         if not proxies:
             proxies = {}
         if not headers:
@@ -28,6 +28,7 @@ class DatabasesTodayHook(object):
         self.content = None
         self.downloaded_databases = []
         self.database_links = []
+        self.downloads_directory = kwargs.get("downloads_directory", DOWNLOADS_PATH)
 
     def _parse_html(self):
         """
@@ -60,11 +61,11 @@ class DatabasesTodayHook(object):
                 to_download.append(db.split('"')[3])
             except Exception:
                 pass
-        if not os.path.exists(DOWNLOADS_PATH):
-            os.makedirs(DOWNLOADS_PATH)
+        if not os.path.exists(self.downloads_directory):
+            os.makedirs(self.downloads_directory)
         for link in to_download:
             local_filename = link.split("/")[-1]
-            local_file_path = "{}/{}".format(DOWNLOADS_PATH, local_filename)
+            local_file_path = "{}/{}".format(self.downloads_directory, local_filename)
             if not os.path.exists(local_file_path):
                 with requests.get(link, stream=True, proxies=self.proxies, headers=self.headers) as downloader:
                     downloader.raise_for_status()
