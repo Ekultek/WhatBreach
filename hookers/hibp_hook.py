@@ -1,14 +1,11 @@
 import requests
 
-from lib.settings import (
-    HIBP_URL,
-    HIBP_PASTE_URL,
-    DEFAULT_REQUEST_HEADERS
-)
+from lib.settings import HIBP_URL, HIBP_PASTE_URL, DEFAULT_REQUEST_HEADERS
 
+import arrow
+from time import sleep
 
 class BeenPwnedHook(object):
-
     def __init__(self, email, headers=False, proxies=False):
         if not proxies:
             proxies = {}
@@ -25,9 +22,9 @@ class BeenPwnedHook(object):
         """
         report_names = set()
         if is_paste:
-            identifier = u"Id"
+            identifier = "Id"
         else:
-            identifier = u"Name"
+            identifier = "Name"
         for report in self.content:
             try:
                 report_names.add(report[identifier])
@@ -40,8 +37,14 @@ class BeenPwnedHook(object):
         hookers accounting gonna hook
         """
         try:
-            req = requests.get(HIBP_URL.format(self.email), headers=self.headers, proxies=self.proxies)
-            self.content = req.json()
+            req = requests.get(
+                HIBP_URL.format(self.email), headers=self.headers, proxies=self.proxies
+            )
+            if req.status_code == 429:
+                wait_time = int(req.headers["Retry-After"])
+                human = arrow.now().shift(seconds=wait_time).humanize()
+                print(f"HIBP Rate Limit Exceeded, try again {human}")
+                sleep(wait_time)
             if self.content != "" or self.content is not None:
                 return self._get_breach_names()
         except Exception:
@@ -52,7 +55,11 @@ class BeenPwnedHook(object):
         paste hookers gonna hook too
         """
         try:
-            req = requests.get(HIBP_PASTE_URL.format(self.email), headers=self.headers, proxies=self.proxies)
+            req = requests.get(
+                HIBP_PASTE_URL.format(self.email),
+                headers=self.headers,
+                proxies=self.proxies,
+            )
             self.content = req.json()
             return self._get_breach_names(is_paste=True)
         except Exception:
