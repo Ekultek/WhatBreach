@@ -19,9 +19,9 @@ from lib.formatter import (
 
 
 def main():
-    print(BANNER)
     try:
         opt = Parser().optparse()
+        print(BANNER)
 
         to_search = []
         do_not_search = []

@@ -5,17 +5,23 @@ import platform
 
 
 # version number
-VERSION = "0.0.1"
+VERSION = "0.0.2"
 
-BANNER = """\n\n\033[35m
- __    __  __ __   ____  ______  ____   ____     ___   ____    __  __ __  _____ 
-|  |__|  ||  |  | /    ||      ||    \ |    \   /  _] /    |  /  ]|  |  |/     |
-|  |  |  ||  |  ||  o  ||      ||  o  )|  D  ) /  [_ |  o  | /  / |  |  ||  Y  |
-|  |  |  ||  _  ||     ||_|  |_||     ||    / |    _]|     |/  /  |  _  ||__|  |
-|  `  '  ||  |  ||  _  |  |  |  |  O  ||    \ |   [_ |  _  /   \_ |  |  |   |__|
- \      / |  |  ||  |  |  |  |  |     ||  .  \|     ||  |  \     ||  |  |    __ 
-  \_/\_/  |__|__||__|__|  |__|  |_____||__|\_||_____||__|__|\____||__|__|   |__| v{ver}\n\n\033[0m""".format(
-    ver=VERSION
+BANNER = """{color_scheme_1}
+{tabbed_indent}                                                    _____ 
+{tabbed_indent}   _ _ _ _       _   _____                 _       |___  |
+{tabbed_indent}  | | | | |_ ___| |_| __  |___ ___ ___ ___| |_       |  _|
+{tabbed_indent}  | | | |   | .'|  _| __ -|  _| -_| .'|  _|   |      |_|  
+{tabbed_indent}  |_____|_|_|__,|_| |_____|_| |___|__,|___|_|_|[][][]|_|{color_scheme_end}
+{tabbed_indent}{color_scheme_2}Find emails and their associated leaked databases.. v{version_number}{color_scheme_end}
+
+""".format(
+    color_scheme_end="\033[0m",
+    color_scheme_1="\033[34m",
+    color_scheme_2="\033[4;33m",
+    version_number=VERSION,
+    tabbed_indent="\t"
+
 )
 
 # home path
@@ -71,7 +77,7 @@ def display_found_databases(data, overflow=23, is_downloaded=False):
         sep = "-" * len(max(tmp, key=len)) + "-" * overflow
         print(sep)
         output_template = "{0:20} | {1:30}"
-        print("\033[99;4mBreached Site:\033[0m\t{}|{}\033[99;4mDatabase Link:\033[0m".format(" " * 5, " "))
+        print("\033[99;4mBreach/Paste:\033[0m\t{}|{}\033[99;4mDatabase/Paste Link:\033[0m".format(" " * 5, " "))
         for i, key in enumerate(data.keys(), start=1):
             key = str(key)
             if type(data[key]) == tuple:

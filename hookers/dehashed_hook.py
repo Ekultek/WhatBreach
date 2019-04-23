@@ -23,7 +23,7 @@ class DehashedHook(object):
     def _parse_html(self):
         """
         returns a dict of parsed HTML if the term is in the HTML
-\        """
+        """
         retval = {}
         for i, value in enumerate(self.return_value):
             try:
