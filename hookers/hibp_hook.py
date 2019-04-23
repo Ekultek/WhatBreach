@@ -5,6 +5,7 @@ from lib.settings import HIBP_URL, HIBP_PASTE_URL, DEFAULT_REQUEST_HEADERS
 import arrow
 from time import sleep
 
+
 class BeenPwnedHook(object):
     def __init__(self, email, headers=False, proxies=False):
         if not proxies:
@@ -45,6 +46,7 @@ class BeenPwnedHook(object):
                 human = arrow.now().shift(seconds=wait_time).humanize()
                 print(f"HIBP Rate Limit Exceeded, try again {human}")
                 sleep(wait_time)
+                account_hooker(self)
             if self.content != "" or self.content is not None:
                 return self._get_breach_names()
         except ValueError:
