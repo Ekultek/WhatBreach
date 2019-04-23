@@ -44,7 +44,8 @@ class BeenPwnedHook(object):
             self.content = req.json()
             if self.content != "" or self.content is not None:
                 return self._get_breach_names()
-        except Exception:
+        except ValueError:
+            # this means something went wrong
             return None
 
     def paste_hooker(self):

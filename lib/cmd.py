@@ -30,6 +30,10 @@ class Parser(argparse.ArgumentParser):
             "-nP", "--no-pastebin", action="store_false", default=True, dest="searchPastebin",
             help="Suppress Pastebin output"
         )
+        search_opts.add_argument(
+            "-c", "--cookie", metavar="DEHASHED-COOKIE", dest="dehashedCookie",
+            help=argparse.SUPPRESS
+        )
 
         misc_opts = parser.add_argument_group("misc opts")
         misc_opts.add_argument(
