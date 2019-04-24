@@ -1,9 +1,16 @@
+from time import sleep
+import arrow
 import requests
 
-from lib.settings import HIBP_URL, HIBP_PASTE_URL, DEFAULT_REQUEST_HEADERS
-
-import arrow
-from time import sleep
+from lib.formatter import (
+    warn,
+    info
+)
+from lib.settings import (
+    HIBP_URL, 
+    HIBP_PASTE_URL, 
+    DEFAULT_REQUEST_HEADERS
+)
 
 
 class BeenPwnedHook(object):
@@ -44,8 +51,9 @@ class BeenPwnedHook(object):
             if req.status_code == 429:
                 wait_time = int(req.headers["Retry-After"])
                 human = arrow.now().shift(seconds=wait_time).humanize()
-                print(f"HIBP Rate Limit Exceeded, try again {human}")
+                warn("HIBP Rate Limit Exceeded, trying again in {}".format(human))
                 sleep(wait_time)
+                info("here we go!")
                 account_hooker(self)
             if self.content != "" or self.content is not None:
                 return self._get_breach_names()
