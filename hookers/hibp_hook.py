@@ -7,8 +7,8 @@ from lib.formatter import (
     info
 )
 from lib.settings import (
-    HIBP_URL, 
-    HIBP_PASTE_URL, 
+    HIBP_URL,
+    HIBP_PASTE_URL,
     DEFAULT_REQUEST_HEADERS
 )
 
@@ -30,9 +30,9 @@ class BeenPwnedHook(object):
         """
         report_names = set()
         if is_paste:
-            identifier = u"Id"
+            identifier = "Id"
         else:
-            identifier = u"Name"
+            identifier = "Name"
         for report in self.content:
             try:
                 report_names.add(report[identifier])
@@ -54,8 +54,10 @@ class BeenPwnedHook(object):
                 warn("HIBP Rate Limit Exceeded, trying again in {}".format(human))
                 sleep(wait_time)
                 info("here we go!")
-                account_hooker(self)
-            if self.content != "" or self.content is not None:
+                self.account_hooker()
+            else:
+                self.content = req.json()
+            if self.content is not None or self.content != "":
                 return self._get_breach_names()
         except ValueError:
             # this means something went wrong

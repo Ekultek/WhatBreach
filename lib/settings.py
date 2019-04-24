@@ -5,7 +5,7 @@ import platform
 
 
 # version number
-VERSION = "0.0.2"
+VERSION = "0.0.3"
 
 BANNER = """{color_scheme_1}
 {tabbed_indent}                                                    _____ 
