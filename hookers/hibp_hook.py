@@ -30,9 +30,9 @@ class BeenPwnedHook(object):
         """
         report_names = set()
         if is_paste:
-            identifier = "Id"
+            identifier = u"Id"
         else:
-            identifier = "Name"
+            identifier = u"Name"
         for report in self.content:
             try:
                 report_names.add(report[identifier])
