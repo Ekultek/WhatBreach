@@ -1,14 +1,19 @@
+from time import sleep
+import arrow
 import requests
 
+from lib.formatter import (
+    warn,
+    info
+)
 from lib.settings import (
-    HIBP_URL,
-    HIBP_PASTE_URL,
+    HIBP_URL, 
+    HIBP_PASTE_URL, 
     DEFAULT_REQUEST_HEADERS
 )
 
 
 class BeenPwnedHook(object):
-
     def __init__(self, email, headers=False, proxies=False):
         if not proxies:
             proxies = {}
@@ -40,8 +45,16 @@ class BeenPwnedHook(object):
         hookers accounting gonna hook
         """
         try:
-            req = requests.get(HIBP_URL.format(self.email), headers=self.headers, proxies=self.proxies)
-            self.content = req.json()
+            req = requests.get(
+                HIBP_URL.format(self.email), headers=self.headers, proxies=self.proxies
+            )
+            if req.status_code == 429:
+                wait_time = int(req.headers["Retry-After"])
+                human = arrow.now().shift(seconds=wait_time).humanize()
+                warn("HIBP Rate Limit Exceeded, trying again in {}".format(human))
+                sleep(wait_time)
+                info("here we go!")
+                account_hooker(self)
             if self.content != "" or self.content is not None:
                 return self._get_breach_names()
         except ValueError:
@@ -53,7 +66,11 @@ class BeenPwnedHook(object):
         paste hookers gonna hook too
         """
         try:
-            req = requests.get(HIBP_PASTE_URL.format(self.email), headers=self.headers, proxies=self.proxies)
+            req = requests.get(
+                HIBP_PASTE_URL.format(self.email),
+                headers=self.headers,
+                proxies=self.proxies,
+            )
             self.content = req.json()
             return self._get_breach_names(is_paste=True)
         except Exception:
