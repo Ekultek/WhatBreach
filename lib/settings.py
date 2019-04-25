@@ -3,9 +3,11 @@ import re
 import sys
 import platform
 
+import lib.formatter
+
 
 # version number
-VERSION = "0.0.3"
+VERSION = "0.0.4"
 
 BANNER = """{color_scheme_1}
 {tabbed_indent}                                                    _____ 
@@ -105,3 +107,22 @@ def check_ten_minute_email(email, path):
         if current_ext in exts:
             return True
     return False
+
+
+def smoosh_multi(single, filename):
+    """
+    add a string and file into a single list
+    """
+    retval = [single]
+    try:
+        open(filename).close()
+    except IOError:
+        lib.formatter.error(
+            "the file failed to open, does it exist?"
+        )
+        exit(1)
+    with open(filename) as data:
+        for item in data.readlines():
+            retval.append(item.strip())
+    return retval
+
