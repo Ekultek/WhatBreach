@@ -22,27 +22,31 @@ def main():
     try:
         opt = Parser().optparse()
         print(BANNER)
-
-        to_search = []
+        res = Parser().check_opts(opt)
+        if res is not None:
+            to_search = res
+        else:
+            to_search = []
         do_not_search = []
 
-        if opt.singleEmail is None and opt.emailFile is None:
-            warn("you have not provided an email to scan, redirecting to the help menu")
-            subprocess.call(["python", "whatbreach.py", "--help"])
-            exit(1)
-        if opt.singleEmail is not None:
-            info("starting search on single email address: {}".format(opt.singleEmail))
-            to_search = [opt.singleEmail]
-        elif opt.emailFile is not None:
-            try:
-                open(opt.emailFile).close()
-            except IOError:
-                error("unable to open file, does it exist?")
+        if len(to_search) == 0:
+            if opt.singleEmail is None and opt.emailFile is None:
+                warn("you have not provided an email to scan, redirecting to the help menu")
+                subprocess.call(["python", "whatbreach.py", "--help"])
                 exit(1)
-            with open(opt.emailFile) as emails:
-                info("parsing email file: {}".format(opt.emailFile))
-                to_search = emails.readlines()
-            info("starting search on a total of {} email(s)".format(len(to_search)))
+            if opt.singleEmail is not None:
+                info("starting search on single email address: {}".format(opt.singleEmail))
+                to_search = [opt.singleEmail]
+            elif opt.emailFile is not None:
+                try:
+                    open(opt.emailFile).close()
+                except IOError:
+                    error("unable to open file, does it exist?")
+                    exit(1)
+                with open(opt.emailFile) as emails:
+                    info("parsing email file: {}".format(opt.emailFile))
+                    to_search = emails.readlines()
+                info("starting search on a total of {} email(s)".format(len(to_search)))
 
         for email in to_search:
             email = email.strip()
