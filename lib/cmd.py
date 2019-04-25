@@ -1,6 +1,7 @@
 import argparse
 
 import lib.settings
+import lib.formatter
 
 
 class Parser(argparse.ArgumentParser):
@@ -54,3 +55,30 @@ class Parser(argparse.ArgumentParser):
             help=argparse.SUPPRESS
         )
         return parser.parse_args()
+
+    @staticmethod
+    def check_opts(opt):
+        need_emails = False
+
+        if opt.singleEmail is not None and opt.emailFile is not None:
+            lib.formatter.warn(
+                "you have provided a list of emails and a singular email at the same time, we're going to put them all "
+                "together and go with it"
+            )
+            need_emails = True
+        if not opt.searchDehashed and not opt.searchPastebin:
+            lib.formatter.warn(
+                "you have chosen to not output any of the discovered data, literally nothing will be shown, whats the "
+                "point of WhatBreach if it doesn't find anything? Drop one of the suppressive flags"
+            )
+            exit(1)
+        if opt.saveDirectory != lib.settings.DOWNLOADS_PATH and not opt.downloadDatabase:
+            lib.formatter.warn(
+                "you've chosen a save directory, but nothing is being downloaded? I mean this isn't going to have any "
+                "problems but it's kinda weird right?"
+            )
+        if opt.staySalty:
+            lib.formatter.info("#staysalty")
+
+        if need_emails:
+            return lib.settings.smoosh_multi(opt.singleEmail, opt.emailFile)
