@@ -4,16 +4,18 @@ import requests
 
 from lib.formatter import (
     warn,
-    info
+    info,
+    error
 )
 from lib.settings import (
     HIBP_URL,
     HIBP_PASTE_URL,
-    DEFAULT_REQUEST_HEADERS
+    DEFAULT_REQUEST_HEADERS,
 )
 
 
 class BeenPwnedHook(object):
+
     def __init__(self, email, headers=False, proxies=False):
         if not proxies:
             proxies = {}
@@ -30,12 +32,13 @@ class BeenPwnedHook(object):
         """
         report_names = set()
         if is_paste:
-            identifier = "Id"
+            identifier = ["Id", u"Id"]
         else:
-            identifier = "Name"
+            identifier = ["Name", u"Name"]
         for report in self.content:
             try:
-                report_names.add(report[identifier])
+                for item in identifier:
+                    report_names.add(report[item])
             except Exception:
                 pass
         return list(report_names)
@@ -55,6 +58,9 @@ class BeenPwnedHook(object):
                 sleep(wait_time)
                 info("here we go!")
                 self.account_hooker()
+            elif req.status_code == 403:
+                error("you have been blocked from HIBP, try again later or change your IP address")
+                exit(1)
             else:
                 self.content = req.json()
             if self.content is not None or self.content != "":

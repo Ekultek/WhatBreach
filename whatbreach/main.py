@@ -134,7 +134,7 @@ def main():
                                             )
                                         )
                     else:
-                        warn("no output to show, most likely due to output suppression")
+                        warn("no output to show, most likely due to output suppression or dehashed")
                 elif account_dumps is None and paste_dumps is not None:
                     # this should never happen
                     error("no database dumps found nor any pastes found for: {}".format(email))

@@ -1,13 +1,14 @@
 import os
 import re
 import sys
+import random
 import platform
 
 import lib.formatter
 
 
 # version number
-VERSION = "0.0.4"
+VERSION = "0.0.5"
 
 BANNER = """{color_scheme_1}
 {tabbed_indent}                                                    _____ 
@@ -61,6 +62,8 @@ TEN_MINUTE_EMAIL_EXTENSION_LIST = "{}/etc/ten_minute_emails.lst".format(os.getcw
 
 # check if the results actually exist or not
 VERIFICATION_REGEX = re.compile("sensitive.data.available.but.hidden", re.I)
+
+RANDOM_USER_AGENT_PATH = "{}/etc/user_agents.txt".format(os.getcwd())
 
 
 def display_found_databases(data, overflow=23, is_downloaded=False):
@@ -126,3 +129,10 @@ def smoosh_multi(single, filename):
             retval.append(item.strip())
     return retval
 
+
+def grab_random_user_agent(path):
+    """
+    grab a random user agent
+    """
+    with open(path) as agents:
+        return random.choice(agents.readlines()).strip()
