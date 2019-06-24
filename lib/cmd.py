@@ -32,11 +32,20 @@ class Parser(argparse.ArgumentParser):
             help="Suppress Pastebin output"
         )
         search_opts.add_argument(
+            "-sH", "--search-hunter", action="store_true", default=False, dest="searchHunterIo",
+            help="Search hunter.io with a provided email address and query for all information, this "
+                 "will process all emails found as normal"
+        )
+        search_opts.add_argument(
             "-c", "--cookie", metavar="DEHASHED-COOKIE", dest="dehashedCookie",
             help=argparse.SUPPRESS
         )
 
         misc_opts = parser.add_argument_group("misc opts")
+        misc_opts.add_argument(
+            "-vH", "--verify-hunter", action="store_true", default=False, dest="verifyEmailsThroughHunterIo",
+            help="Verify the emails found on hunter.io for deliverable status"
+        )
         misc_opts.add_argument(
             "-cT", "--check-ten-minute", action="store_true", default=False, dest="checkTenMinuteEmail",
             help="Check if the provided email address is a ten minute email or not"
@@ -60,6 +69,11 @@ class Parser(argparse.ArgumentParser):
     def check_opts(opt):
         need_emails = False
 
+        if opt.searchHunterIo and opt.emailFile is not None:
+            lib.formatter.error(
+                "for now searching hunter.io is only compatible with single email addresses using the `-e` flag"
+            )
+            exit(1)
         if opt.singleEmail is not None and opt.emailFile is not None:
             lib.formatter.warn(
                 "you have provided a list of emails and a singular email at the same time, we're going to put them all "

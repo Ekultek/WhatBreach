@@ -22,7 +22,10 @@ class DehashedHook(object):
             headers["User-Agent"] = grab_random_user_agent(RANDOM_USER_AGENT_PATH)
             # we're gonna go ahead and try to trick dehashed into thinking
             # we're a real person
-            del headers["Made-With-Love"]
+            try:
+                del headers["Made-With-Love"]
+            except:
+                pass
         self.found = found_breaches
         self.headers = headers
         self.proxies = proxies

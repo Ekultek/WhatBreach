@@ -4,6 +4,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
+from lib.formatter import info
 from lib.settings import (
     DATABASES_URL,
     DEFAULT_REQUEST_HEADERS,
@@ -53,6 +54,7 @@ class DatabasesTodayHook(object):
         """
         download the database if it is available
         """
+        info("discovered publicly available database for query {}".format(self.query))
         flatten = lambda l: [str(item) for sublist in l for item in sublist]
         database_links = flatten(self.database_links)
         to_download = []

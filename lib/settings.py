@@ -1,6 +1,8 @@
 import os
 import re
 import sys
+import json
+import string
 import random
 import platform
 
@@ -8,7 +10,7 @@ import lib.formatter
 
 
 # version number
-VERSION = "0.0.5"
+VERSION = "0.1.0"
 
 BANNER = """{color_scheme_1}
 {tabbed_indent}                                                    _____ 
@@ -33,6 +35,12 @@ HOME = "{}/.whatbreach_home".format(os.path.expanduser("~"))
 # where we gonna download this shit too?
 DOWNLOADS_PATH = "{}/downloads".format(HOME)
 
+# where we're going to place the JSON data
+JSON_DATA_DUMPS = "{}/json_dumps".format(HOME)
+
+# API token paths
+TOKENS_PATH = "{}/tokens".format(HOME)
+
 # have you been pwned?!
 HIBP_URL = "https://haveibeenpwned.com/api/v2/breachedaccount/{}"
 
@@ -44,6 +52,12 @@ DEHASHED_URL = "https://www.dehashed.com/search?query={}"
 
 # databases.tody URL
 DATABASES_URL = "https://databases.today/search-nojs.php?for={}"
+
+# hunter.io API url
+HUNTER_IO_URL = "https://api.hunter.io/v2/domain-search?domain={domain}&api_key={api_key}"
+
+# api link to verify email status
+HUNTER_IO_VERIFY_URL = "https://api.hunter.io/v2/email-verifier?email={email}&api_key={api_key}"
 
 # our user agent because who doesn't love a good user agent?
 USER_AGENT = "Breach-Reporter/{} (Language={}; Platform={})".format(
@@ -64,6 +78,17 @@ TEN_MINUTE_EMAIL_EXTENSION_LIST = "{}/etc/ten_minute_emails.lst".format(os.getcw
 VERIFICATION_REGEX = re.compile("sensitive.data.available.but.hidden", re.I)
 
 RANDOM_USER_AGENT_PATH = "{}/etc/user_agents.txt".format(os.getcwd())
+
+
+def random_string(length=10):
+    """
+    random strings so files dont get fucked up
+    """
+    acceptable = string.ascii_letters
+    _string = []
+    for _ in range(length):
+        _string.append(random.choice(acceptable))
+    return "".join(_string)
 
 
 def display_found_databases(data, overflow=23, is_downloaded=False):
@@ -136,3 +161,81 @@ def grab_random_user_agent(path):
     """
     with open(path) as agents:
         return random.choice(agents.readlines()).strip()
+
+
+def grab_api_tokens():
+    """
+    grab API tokens from the stored data, this will be useful for when we add more APIs
+    """
+    filenames = (
+        "{}/hunter.io",
+    )
+    if not os.path.exists(TOKENS_PATH):
+        os.makedirs(TOKENS_PATH)
+        for f in filenames:
+            with open(f.format(TOKENS_PATH), 'a+') as token:
+                item = raw_input("You have no provided a token for {}, enter token: ".format(f.split("/")[-1]))
+                token.write(item.strip())
+    else:
+        tokens = {}
+        for f in filenames:
+            with open(f.format(TOKENS_PATH)) as data:
+                token_identifier = f.split("/")[-1]
+                lib.formatter.info("grabbing {} API token".format(token_identifier))
+                tokens[token_identifier] = data.read().strip()
+        return tokens
+
+
+def write_processed_to_file(data, domain, file_path):
+    """
+    write the processed data to a file
+    """
+    with open(file_path, 'a+') as dump:
+        json.dump(data[domain], dump, sort_keys=True, indent=4)
+    return file_path
+
+
+def process_discovered(numbers, urls, emails, pattern, domain, do_write=True):
+    """
+    make a pretty little output of discovered API data
+    """
+    lib.formatter.info("information discovered associated with {}".format(domain))
+    lib.formatter.info("discovered possible pattern to emails: {}".format(pattern))
+    if len(numbers) != 0:
+        lib.formatter.info("discovered possible associated phone numbers:")
+        for number in numbers:
+            if number is not None:
+                print("   -> {}".format(str(number).replace(" ", "-")))
+    else:
+        lib.formatter.warn("did not discover any associated phone numbers")
+    if len(emails) != 0:
+        lib.formatter.info("discovered related emails:")
+        for email in emails:
+            print("  -> {}".format(str(email)))
+    else:
+        lib.formatter.warn("did not discover any more associated email addresses")
+    if len(urls) != 0:
+        lib.formatter.info("discovered (possibly related) external URL's:")
+        for url in urls:
+            print("  -> {}".format(str(url)))
+    else:
+        lib.formatter.warn("did not discover any possibly related links")
+    if do_write:
+        filename = "{}_{}.json".format(random_string(), str(domain))
+        file_path = "{}/{}".format(JSON_DATA_DUMPS, filename)
+        if not os.path.exists(JSON_DATA_DUMPS):
+            os.makedirs(JSON_DATA_DUMPS)
+        lib.formatter.info("dumping all information into json file for further processing")
+        write_data = {
+            domain: {
+                "recognition_pattern": pattern if pattern is not None else None,
+                "discovered_emails": list(emails),
+                "external_urls": list(urls) if len(urls) != 0 else None,
+                "discovered_numbers": list(numbers) if len(numbers) != 0 else None
+            }
+        }
+        file_path = write_processed_to_file(write_data, domain, file_path)
+        lib.formatter.info("information written to: {}".format(file_path))
+        return file_path
+    else:
+        return None

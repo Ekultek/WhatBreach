@@ -1,12 +1,15 @@
+import json
 import subprocess
 
 from lib.cmd import Parser
+from hookers.hunter_io_hook import HunterIoHook
 from hookers.hibp_hook import BeenPwnedHook
 from hookers.dehashed_hook import DehashedHook
 from hookers.databasestoday_hook import DatabasesTodayHook
 from lib.settings import (
     BANNER,
     display_found_databases,
+    grab_api_tokens,
     check_ten_minute_email,
     TEN_MINUTE_EMAIL_EXTENSION_LIST
 )
@@ -34,7 +37,17 @@ def main():
                 warn("you have not provided an email to scan, redirecting to the help menu")
                 subprocess.call(["python", "whatbreach.py", "--help"])
                 exit(1)
-            if opt.singleEmail is not None:
+            if opt.searchHunterIo and opt.singleEmail is not None:
+                info("starting search on hunter.io using {}".format(opt.singleEmail))
+                api_tokens = grab_api_tokens()
+                file_results = HunterIoHook(
+                    opt.singleEmail, api_tokens["hunter.io"], verify_emails=opt.verifyEmailsThroughHunterIo
+                ).hooker()
+                with open(file_results) as data:
+                    emails = json.loads(data.read())["discovered_emails"]
+                for email in emails:
+                    to_search.append(email)
+            elif opt.singleEmail is not None:
                 info("starting search on single email address: {}".format(opt.singleEmail))
                 to_search = [opt.singleEmail]
             elif opt.emailFile is not None:
