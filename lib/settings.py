@@ -167,6 +167,7 @@ def grab_api_tokens():
     """
     grab API tokens from the stored data, this will be useful for when we add more APIs
     """
+    tokens = {}
     filenames = (
         "{}/hunter.io",
     )
@@ -176,14 +177,12 @@ def grab_api_tokens():
             with open(f.format(TOKENS_PATH), 'a+') as token:
                 item = raw_input("You have no provided a token for {}, enter token: ".format(f.split("/")[-1]))
                 token.write(item.strip())
-    else:
-        tokens = {}
-        for f in filenames:
-            with open(f.format(TOKENS_PATH)) as data:
-                token_identifier = f.split("/")[-1]
-                lib.formatter.info("grabbing {} API token".format(token_identifier))
-                tokens[token_identifier] = data.read().strip()
-        return tokens
+    for f in filenames:
+        with open(f.format(TOKENS_PATH)) as data:
+            token_identifier = f.split("/")[-1]
+            lib.formatter.info("grabbing {} API token".format(token_identifier))
+            tokens[token_identifier] = data.read().strip()
+    return tokens
 
 
 def write_processed_to_file(data, domain, file_path):
