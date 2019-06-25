@@ -10,7 +10,7 @@ import lib.formatter
 
 
 # version number
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 
 BANNER = """{color_scheme_1}
 {tabbed_indent}                                                    _____ 
@@ -247,3 +247,14 @@ def process_discovered(numbers, urls, emails, pattern, domain, do_write=True):
         return file_path
     else:
         return None
+
+
+def test_file(filename):
+    """
+    check if a file exists or not
+    """
+    try:
+        open(filename).close()
+        return True
+    except IOError:
+        return False

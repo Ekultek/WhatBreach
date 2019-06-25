@@ -7,6 +7,7 @@ from hookers.hibp_hook import BeenPwnedHook
 from hookers.dehashed_hook import DehashedHook
 from hookers.databasestoday_hook import DatabasesTodayHook
 from lib.settings import (
+    test_file,
     BANNER,
     display_found_databases,
     grab_api_tokens,
@@ -47,14 +48,27 @@ def main():
                     emails = json.loads(data.read())["discovered_emails"]
                 for email in emails:
                     to_search.append(email)
+            elif opt.searchHunterIo and opt.emailFile is not None:
+                if not test_file(opt.emailFile):
+                    error("unable to open filename, does it exist?")
+                    exit(1)
+                api_tokens = grab_api_tokens()
+                with open(opt.emailFile) as data:
+                    for email in data.readlines():
+                        email = email.strip()
+                        file_results = HunterIoHook(
+                            email, api_tokens["hunter.io"], verify_emails=opt.verifyEmailsThroughHunterIo
+                        ).hooker()
+                        with open(file_results) as results:
+                            discovered_emails = json.loads(results.read())["discovered_emails"]
+                        for discovered in discovered_emails:
+                            to_search.append(discovered)
             elif opt.singleEmail is not None:
                 info("starting search on single email address: {}".format(opt.singleEmail))
                 to_search = [opt.singleEmail]
             elif opt.emailFile is not None:
-                try:
-                    open(opt.emailFile).close()
-                except IOError:
-                    error("unable to open file, does it exist?")
+                if not test_file(opt.emailFile):
+                    error("unable to open filename, does it exist?")
                     exit(1)
                 with open(opt.emailFile) as emails:
                     info("parsing email file: {}".format(opt.emailFile))

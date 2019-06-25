@@ -68,12 +68,6 @@ class Parser(argparse.ArgumentParser):
     @staticmethod
     def check_opts(opt):
         need_emails = False
-
-        if opt.searchHunterIo and opt.emailFile is not None:
-            lib.formatter.error(
-                "for now searching hunter.io is only compatible with single email addresses using the `-e` flag"
-            )
-            exit(1)
         if opt.singleEmail is not None and opt.emailFile is not None:
             lib.formatter.warn(
                 "you have provided a list of emails and a singular email at the same time, we're going to put them all "
