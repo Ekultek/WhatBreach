@@ -10,7 +10,7 @@ import lib.formatter
 
 
 # version number
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 BANNER = """{color_scheme_1}
 {tabbed_indent}                                                    _____ 
@@ -109,11 +109,21 @@ def display_found_databases(data, overflow=23, is_downloaded=False):
         output_template = "{0:20} | {1:30}"
         print("\033[99;4mBreach/Paste:\033[0m\t{}|{}\033[99;4mDatabase/Paste Link:\033[0m".format(" " * 5, " "))
         for i, key in enumerate(data.keys(), start=1):
+            original_key = str(key)
+            do_show_key = False
             key = str(key)
             if type(data[key]) == tuple:
                 result, search_url = data[key][0], data[key][-1]
+                if len(key) >= 20:
+                    key = key[0:15] + "..."
+                    do_show_key = True
                 if result:
                     print(output_template.format(key, data[key][-1]))
+                else:
+                    if do_show_key:
+                        print(output_template.format(key, "N/A (breach name: {})".format(original_key)))
+                    else:
+                        print(output_template.format(key, "N/A"))
             else:
                 print(output_template.format(key, str(data[key])))
         print(sep)
@@ -198,27 +208,26 @@ def process_discovered(numbers, urls, emails, pattern, domain, do_write=True):
     """
     make a pretty little output of discovered API data
     """
+
+    def output_loop(data, identifier, loop_length=10, numbers=False):
+        lib.formatter.info("discovered associated {}:".format(identifier))
+        if len(data) != 0:
+            total = len(data)
+            for i, item in enumerate(data, start=1):
+                if i != loop_length:
+                    if item is not None:
+                        print("\t-> {}".format(str(item).replace(" ", "-") if numbers else str(item)))
+                else:
+                    lib.formatter.warn("hit maximum length, total of {} not displayed".format(total - i))
+                    break
+        else:
+            lib.formatter.warn("did not discover any associated {}".format(identifier))
+
     lib.formatter.info("information discovered associated with {}".format(domain))
     lib.formatter.info("discovered possible pattern to emails: {}".format(pattern))
-    if len(numbers) != 0:
-        lib.formatter.info("discovered possible associated phone numbers:")
-        for number in numbers:
-            if number is not None:
-                print("   -> {}".format(str(number).replace(" ", "-")))
-    else:
-        lib.formatter.warn("did not discover any associated phone numbers")
-    if len(emails) != 0:
-        lib.formatter.info("discovered related emails:")
-        for email in emails:
-            print("  -> {}".format(str(email)))
-    else:
-        lib.formatter.warn("did not discover any more associated email addresses")
-    if len(urls) != 0:
-        lib.formatter.info("discovered (possibly related) external URL's:")
-        for url in urls:
-            print("  -> {}".format(str(url)))
-    else:
-        lib.formatter.warn("did not discover any possibly related links")
+    output_loop(numbers, "phone number(s)", numbers=True)
+    output_loop(emails, "email address(es)")
+    output_loop(urls, "external URL(s)")
     if do_write:
         filename = "{}_{}.json".format(random_string(), str(domain))
         file_path = "{}/{}".format(JSON_DATA_DUMPS, filename)
