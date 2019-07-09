@@ -1,4 +1,5 @@
 import json
+import time
 import subprocess
 
 from lib.cmd import Parser
@@ -86,6 +87,9 @@ def main():
                         do_not_search.append(email)
 
             if email not in do_not_search:
+                if opt.throttleRequests != 0:
+                    info("taking a {} second break".format(opt.throttleRequests))
+                    time.sleep(opt.throttleRequests)
                 info("searching breached accounts on HIBP related to: {}".format(email))
                 account_dumps = BeenPwnedHook(email).account_hooker()
                 info("searching for paste dumps on HIBP related to: {}".format(email))
@@ -109,7 +113,7 @@ def main():
                         found_databases = {}
                     for i, dump in enumerate(paste_dumps, start=1):
                         found_databases["Paste#{}".format(i)] = str(dump)
-                    display_found_databases(found_databases)
+                    display_found_databases(found_databases, download_pastes=opt.downloadPastes)
                     if opt.downloadDatabase:
                         for item in found_databases.keys():
                             if "Paste" not in item:
@@ -123,7 +127,9 @@ def main():
                                             len(downloaded), item
                                         )
                                     )
-                                    display_found_databases(downloaded, is_downloaded=True)
+                                    display_found_databases(
+                                        downloaded, is_downloaded=True, download_pastes=opt.downloadPastes
+                                    )
                                 else:
                                     warn(
                                         "no databases appeared to be present and downloadable related to query: {}".format(
@@ -139,7 +145,7 @@ def main():
                         warn("suppressing discovered databases")
                         found_databases = {}
                     if len(found_databases) != 0:
-                        display_found_databases(found_databases)
+                        display_found_databases(found_databases, download_pastes=opt.downloadPastes)
                         if opt.downloadDatabase:
                             for item in found_databases.keys():
                                 if "Paste" not in item:
@@ -153,7 +159,9 @@ def main():
                                                 len(downloaded), item
                                             )
                                         )
-                                        display_found_databases(downloaded, is_downloaded=True)
+                                        display_found_databases(
+                                            downloaded, is_downloaded=True, download_pastes=opt.downloadPastes
+                                        )
                                     else:
                                         warn(
                                             "no databases appeared to be present and downloadable related to query: {}".format(

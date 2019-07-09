@@ -8,9 +8,11 @@ import platform
 
 import lib.formatter
 
+from hookers.pastebin_hook import PastebinRawHook
+
 
 # version number
-VERSION = "0.1.3"
+VERSION = "0.1.4"
 
 BANNER = """{color_scheme_1}
 {tabbed_indent}                                                    _____ 
@@ -35,8 +37,11 @@ HOME = "{}/.whatbreach_home".format(os.path.expanduser("~"))
 # where we gonna download this shit too?
 DOWNLOADS_PATH = "{}/downloads".format(HOME)
 
+# pastebin downloads
+PASTEBIN_DOWNLOADS = "{}/pastebin".format(DOWNLOADS_PATH)
+
 # where we're going to place the JSON data
-JSON_DATA_DUMPS = "{}/json_dumps".format(HOME)
+JSON_DATA_DUMPS = "{}/json_dumps".format(DOWNLOADS_PATH)
 
 # API token paths
 TOKENS_PATH = "{}/tokens".format(HOME)
@@ -94,10 +99,11 @@ def random_string(length=10):
     return "".join(_string)
 
 
-def display_found_databases(data, overflow=23, is_downloaded=False):
+def display_found_databases(data, overflow=23, is_downloaded=False, download_pastes=False):
     """
     display the found data in a pretty table
     """
+    pastebins = []
     if not is_downloaded:
         tmp = []
         for item in data.keys():
@@ -105,6 +111,7 @@ def display_found_databases(data, overflow=23, is_downloaded=False):
                 tmp.append(data[item][-1])
             else:
                 if len(data[item]) == 8:
+                    pastebins.append("https://pastebin.com/raw/{}".format(data[item]))
                     data[item] = "https://pastebin.com/{}".format(data[item])
                 tmp.append(data[item])
         sep = "-" * len(max(tmp, key=len)) + "-" * overflow
@@ -136,6 +143,25 @@ def display_found_databases(data, overflow=23, is_downloaded=False):
         for i, path in enumerate(data, start=1):
             print("#{} ~~> {}".format(i, path))
         print(sep)
+    if download_pastes:
+        download_raw_pastes(pastebins)
+
+
+def download_raw_pastes(pastebins):
+    """
+    download the pastes
+    """
+    pastebin_hook = PastebinRawHook
+    if len(pastebins) != 0:
+        lib.formatter.info("downloading a total of {} paste(s)".format(len(pastebins)))
+        for paste in pastebins:
+            path = pastebin_hook(paste).hooker()
+            if path is not None:
+                lib.formatter.info("paste downloaded to {}".format(path))
+            else:
+                lib.formatter.error("unable to download provided paste from link: {}".format(paste))
+    else:
+        lib.formatter.warn("no pastes discovered for associated email")
 
 
 def check_ten_minute_email(email, path):

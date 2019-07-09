@@ -43,6 +43,10 @@ class Parser(argparse.ArgumentParser):
 
         misc_opts = parser.add_argument_group("misc opts")
         misc_opts.add_argument(
+            "-dP", "--download-pastes", action="store_true", default=False, dest="downloadPastes",
+            help="Download pastes associated with the email address found (if any)"
+        )
+        misc_opts.add_argument(
             "-vH", "--verify-hunter", action="store_true", default=False, dest="verifyEmailsThroughHunterIo",
             help="Verify the emails found on hunter.io for deliverable status"
         )
@@ -57,6 +61,10 @@ class Parser(argparse.ArgumentParser):
         misc_opts.add_argument(
             "-s", "--save-dir", metavar="DIRECTORY-PATH", default=lib.settings.DOWNLOADS_PATH, dest="saveDirectory",
             help="Pass a directory to save the downloaded databases into instead of the `HOME` path"
+        )
+        misc_opts.add_argument(
+            "--throttle", metavar="TIME", type=int, dest="throttleRequests", default=0,
+            help="Throttle the HIBP requests to help prevent yourself from being blocked"
         )
         # easter egg, because we gotta keep it salty ya know
         misc_opts.add_argument(
@@ -80,6 +88,12 @@ class Parser(argparse.ArgumentParser):
                 "point of WhatBreach if it doesn't find anything? Drop one of the suppressive flags"
             )
             exit(1)
+        if opt.downloadPastes and not opt.searchPastebin:
+            lib.formatter.warn(
+                "you have provided that you don't want to see any pastebin output, WhatBreach isn't going to "
+                "search for pastes if it doesn't need to. So we're not gonna download the pastes, genius.."
+            )
+            opt.downloadPastes = False
         if opt.saveDirectory != lib.settings.DOWNLOADS_PATH and not opt.downloadDatabase:
             lib.formatter.warn(
                 "you've chosen a save directory, but nothing is being downloaded? I mean this isn't going to have any "
