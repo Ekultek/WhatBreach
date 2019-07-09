@@ -10,7 +10,7 @@ import lib.formatter
 
 
 # version number
-VERSION = "0.1.2"
+VERSION = "0.1.3"
 
 BANNER = """{color_scheme_1}
 {tabbed_indent}                                                    _____ 
@@ -58,6 +58,9 @@ HUNTER_IO_URL = "https://api.hunter.io/v2/domain-search?domain={domain}&api_key=
 
 # api link to verify email status
 HUNTER_IO_VERIFY_URL = "https://api.hunter.io/v2/email-verifier?email={email}&api_key={api_key}"
+
+# link to welinkinfo.com
+WELEAKINFO_URL = "https://weleakinfo.com/search?type=email&query={}"
 
 # our user agent because who doesn't love a good user agent?
 USER_AGENT = "Breach-Reporter/{} (Language={}; Platform={})".format(
@@ -140,9 +143,10 @@ def check_ten_minute_email(email, path):
     check if the provided email is a ten minute email or not
     """
     with open(path) as data:
-        exts = [e.strip() for e in data.readlines()]
+        search_dump = data.read()
         current_ext = email.split("@")[-1]
-        if current_ext in exts:
+        searcher = re.compile(current_ext, re.I)
+        if searcher.search(search_dump) is not None:
             return True
     return False
 
@@ -210,8 +214,8 @@ def process_discovered(numbers, urls, emails, pattern, domain, do_write=True):
     """
 
     def output_loop(data, identifier, loop_length=10, numbers=False):
-        lib.formatter.info("discovered associated {}:".format(identifier))
         if len(data) != 0:
+            lib.formatter.info("discovered associated {}:".format(identifier))
             total = len(data)
             for i, item in enumerate(data, start=1):
                 if i != loop_length:
@@ -224,7 +228,10 @@ def process_discovered(numbers, urls, emails, pattern, domain, do_write=True):
             lib.formatter.warn("did not discover any associated {}".format(identifier))
 
     lib.formatter.info("information discovered associated with {}".format(domain))
-    lib.formatter.info("discovered possible pattern to emails: {}".format(pattern))
+    if "None" not in pattern:
+        lib.formatter.info("discovered possible pattern to emails: {}".format(pattern))
+    else:
+        lib.formatter.warn("no email recognition pattern found")
     output_loop(numbers, "phone number(s)", numbers=True)
     output_loop(emails, "email address(es)")
     output_loop(urls, "external URL(s)")

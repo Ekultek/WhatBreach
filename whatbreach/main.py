@@ -126,7 +126,7 @@ def main():
                                     display_found_databases(downloaded, is_downloaded=True)
                                 else:
                                     warn(
-                                        "no databases appeared to be preset and downloadable related to query: {}".format(
+                                        "no databases appeared to be present and downloadable related to query: {}".format(
                                             str(item)
                                         )
                                     )
@@ -156,7 +156,7 @@ def main():
                                         display_found_databases(downloaded, is_downloaded=True)
                                     else:
                                         warn(
-                                            "no databases appeared to be preset and downloadable related to query: {}".format(
+                                            "no databases appeared to be present and downloadable related to query: {}".format(
                                                 str(item)
                                             )
                                         )
