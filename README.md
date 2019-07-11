@@ -8,6 +8,7 @@ WhatBreach is an OSINT tool that simplifies the task of discovering what breache
  - WhatBreach takes advantage of pastes from [pastebin.com](https://pastebin.com/) that have been found from HIBP. It will also provide a link to the paste that the breach was seen in and is capable of downloading the raw paste if requested
  - WhatBreach takes advantage of [databases.today](https://databases.today/) to download the databases off the website. This allows a simple and effective way of downloading databases without having to search manually
  - WhatBreach takes advantage of [weleakinfo.com](https://weleakinfo.com/)'s API (requires free API token) this provides an extra search for the email in order to discover even more public breaches
+ - WhatBreach takes advantage of [emailrep.io/](https://emailrep.io/)'s simple open API to search for possible profiles associated with an email, it also dumps all information discovered into a file for further processing
 
 Some interesting features of WhatBreach include the following:
  
@@ -273,6 +274,30 @@ OnlinerSpambot       | N/A
 ---------------------------------------------------------------------------
 [ w ] email: userl337@uhren.com appears to be a ten minute email
 [ ? ] would you like to process the email[y/N]: n
+```
+
+Searching for profiles associated with the email:
+```
+python whatbreach.py -e user@gmail.com -cA
+
+                                                            _____ 
+           _ _ _ _       _   _____                 _       |___  |
+          | | | | |_ ___| |_| __  |___ ___ ___ ___| |_       |  _|
+          | | | |   | .'|  _| __ -|  _| -_| .'|  _|   |      |_|  
+          |_____|_|_|__,|_| |_____|_| |___|__,|___|_|_|[][][]|_|
+        Find emails and their associated leaked databases.. v0.1.8
+
+
+[ i ] starting search on single email address: user@gmail.com
+[ i ] searching for possible profiles related to user@gmail.com
+[ i ] all data dumped to file for future processing: /Users/admin/.whatbreach_home/downloads/json_dumps/user_emailrep.json
+[ i ] found a total of 5 possible profiles associated with user@gmail.com on the following domains:
+        -> Twitter
+        -> Instagram
+        -> Pastebin
+        -> Pinterest
+        -> Spotify
+...
 ```
 
 # Installation
