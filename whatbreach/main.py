@@ -3,6 +3,7 @@ import time
 import subprocess
 
 from lib.cmd import Parser
+from hookers.weleakinfo_hook import WeLeakInfoHook
 from hookers.hunter_io_hook import HunterIoHook
 from hookers.hibp_hook import BeenPwnedHook
 from hookers.dehashed_hook import DehashedHook
@@ -39,9 +40,9 @@ def main():
                 warn("you have not provided an email to scan, redirecting to the help menu")
                 subprocess.call(["python", "whatbreach.py", "--help"])
                 exit(1)
+            api_tokens = grab_api_tokens()
             if opt.searchHunterIo and opt.singleEmail is not None:
                 info("starting search on hunter.io using {}".format(opt.singleEmail))
-                api_tokens = grab_api_tokens()
                 file_results = HunterIoHook(
                     opt.singleEmail, api_tokens["hunter.io"], verify_emails=opt.verifyEmailsThroughHunterIo
                 ).hooker()
@@ -88,7 +89,6 @@ def main():
 
             if email not in do_not_search:
                 if opt.throttleRequests != 0:
-                    info("taking a {} second break".format(opt.throttleRequests))
                     time.sleep(opt.throttleRequests)
                 info("searching breached accounts on HIBP related to: {}".format(email))
                 account_dumps = BeenPwnedHook(email).account_hooker()
@@ -100,6 +100,31 @@ def main():
                     warn("suppressing discovered pastes")
                     paste_dumps = []
 
+                if opt.searchWeLeakInfo:
+                    info("searching weleakinfo.com for breaches related to: {}".format(email))
+                    searcher = WeLeakInfoHook(email, api_tokens["weleakinfo.com"])
+                    tmp = set()
+                    results = searcher.hooker()
+                    if results is not None:
+                        original_length = len(account_dumps)
+                        for item in account_dumps:
+                            tmp.add(item)
+                        for item in results:
+                            tmp.add(item)
+                        account_dumps = list(tmp)
+                        new_length = len(account_dumps)
+                        amount_discovered = new_length - original_length
+                        if amount_discovered != 0:
+                            info(
+                                "discovered a total of {} more breaches from weleakinfo.com".format(
+                                    new_length - original_length
+                                )
+                            )
+                        else:
+                            warn("did not discover any new databases from weleakinfo.com")
+                    else:
+                        warn("unable to search weleakinfo.com is your API key correct?")
+
                 if account_dumps is not None and paste_dumps is not None:
                     info(
                         "found a total of {} database breach(es) and a total of {} paste(s) pertaining to: {}".format(
@@ -107,6 +132,11 @@ def main():
                         )
                     )
                     if opt.searchDehashed:
+                        if len(account_dumps) > 20:
+                            warn(
+                                "large amount of database breaches, obtaining links from "
+                                "dehashed (this may take a minute)"
+                            )
                         found_databases = DehashedHook(account_dumps).hooker()
                     else:
                         warn("suppressing discovered databases")
@@ -140,6 +170,11 @@ def main():
                 elif account_dumps is not None and paste_dumps is None:
                     info("found a total of {} database breach(es) pertaining to: {}".format(len(account_dumps), email))
                     if opt.searchDehashed:
+                        if len(account_dumps) > 20:
+                            warn(
+                                "large amount of database breaches, obtaining links from "
+                                "dehashed (this may take a minute)"
+                            )
                         found_databases = DehashedHook(account_dumps).hooker()
                     else:
                         warn("suppressing discovered databases")

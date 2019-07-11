@@ -12,8 +12,9 @@ from hookers.pastebin_hook import PastebinRawHook
 
 
 # version number
-VERSION = "0.1.4"
+VERSION = "0.1.5"
 
+# sexy banner
 BANNER = """{color_scheme_1}
 {tabbed_indent}                                                    _____ 
 {tabbed_indent}   _ _ _ _       _   _____                 _       |___  |
@@ -65,7 +66,7 @@ HUNTER_IO_URL = "https://api.hunter.io/v2/domain-search?domain={domain}&api_key=
 HUNTER_IO_VERIFY_URL = "https://api.hunter.io/v2/email-verifier?email={email}&api_key={api_key}"
 
 # link to welinkinfo.com
-WELEAKINFO_URL = "https://weleakinfo.com/search?type=email&query={}"
+WELEAKINFO_URL = "https://api.weleakinfo.com/v3/public/email/{}"
 
 # our user agent because who doesn't love a good user agent?
 USER_AGENT = "Breach-Reporter/{} (Language={}; Platform={})".format(
@@ -85,6 +86,7 @@ TEN_MINUTE_EMAIL_EXTENSION_LIST = "{}/etc/ten_minute_emails.lst".format(os.getcw
 # check if the results actually exist or not
 VERIFICATION_REGEX = re.compile("sensitive.data.available.but.hidden", re.I)
 
+# where the user agents sit
 RANDOM_USER_AGENT_PATH = "{}/etc/user_agents.txt".format(os.getcwd())
 
 
@@ -124,14 +126,14 @@ def display_found_databases(data, overflow=23, is_downloaded=False, download_pas
             key = str(key)
             if type(data[key]) == tuple:
                 result, search_url = data[key][0], data[key][-1]
-                if len(key) >= 20:
-                    key = key[0:15] + "..."
+                if len(key) >= 19:
+                    display_key = key[0:15] + "..."
                     do_show_key = True
                 if result:
                     print(output_template.format(key, data[key][-1]))
                 else:
                     if do_show_key:
-                        print(output_template.format(key, "N/A (breach name: {})".format(original_key)))
+                        print(output_template.format(display_key, "N/A (breach name: {})".format(original_key)))
                     else:
                         print(output_template.format(key, "N/A"))
             else:
@@ -209,18 +211,19 @@ def grab_api_tokens():
     """
     tokens = {}
     filenames = (
-        "{}/hunter.io",
+        "{}/hunter.io", "{}/weleakinfo.com"
     )
     if not os.path.exists(TOKENS_PATH):
         os.makedirs(TOKENS_PATH)
-        for f in filenames:
-            with open(f.format(TOKENS_PATH), 'a+') as token:
-                item = raw_input("You have no provided a token for {}, enter token: ".format(f.split("/")[-1]))
-                token.write(item.strip())
     for f in filenames:
+        if not os.path.exists(f.format(TOKENS_PATH)):
+            with open(f.format(TOKENS_PATH), 'a+') as token:
+                item = lib.formatter.prompt(
+                    "you have not provided a token for {}, enter token".format(f.split("/")[-1]), lowercase=False
+                )
+                token.write(item.strip())
         with open(f.format(TOKENS_PATH)) as data:
             token_identifier = f.split("/")[-1]
-            lib.formatter.info("grabbing {} API token".format(token_identifier))
             tokens[token_identifier] = data.read().strip()
     return tokens
 
