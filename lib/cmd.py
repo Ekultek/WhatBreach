@@ -41,6 +41,10 @@ class Parser(argparse.ArgumentParser):
             help="Search weleakinfo.com as well as HIBP for results"
         )
         search_opts.add_argument(
+            "-cA", "--check-accounts", action="store_true", default=False, dest="checkEmailAccounts",
+            help="Check the profiles associated with an email address"
+        )
+        search_opts.add_argument(
             "-c", "--cookie", metavar="DEHASHED-COOKIE", dest="dehashedCookie",
             help=argparse.SUPPRESS
         )

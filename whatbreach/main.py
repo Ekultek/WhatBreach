@@ -8,6 +8,7 @@ from hookers.hunter_io_hook import HunterIoHook
 from hookers.hibp_hook import BeenPwnedHook
 from hookers.dehashed_hook import DehashedHook
 from hookers.databasestoday_hook import DatabasesTodayHook
+from hookers.emailrep_io_hook import EmailRepHook
 from lib.settings import (
     test_file,
     BANNER,
@@ -86,6 +87,21 @@ def main():
                     answer = prompt("would you like to process the email[y/N]")
                     if answer.startswith("n"):
                         do_not_search.append(email)
+
+            if opt.checkEmailAccounts:
+                info("searching for possible profiles related to {}".format(email))
+                searcher = EmailRepHook(email)
+                results = searcher.hooker()
+                if results is not None and len(results) != 0:
+                    info(
+                        "found a total of {} possible profiles associated with {} on the following domains:".format(
+                            len(results), email
+                        )
+                    )
+                    for domain in results:
+                        print("\t-> {}".format(domain.title()))
+                else:
+                    warn("no possible profiles discovered for email: {}".format(email))
 
             if email not in do_not_search:
                 if opt.throttleRequests != 0:

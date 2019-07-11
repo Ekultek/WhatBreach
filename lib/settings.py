@@ -12,7 +12,7 @@ from hookers.pastebin_hook import PastebinRawHook
 
 
 # version number
-VERSION = "0.1.6"
+VERSION = "0.1.7"
 
 # sexy banner
 BANNER = """{color_scheme_1}
@@ -67,6 +67,9 @@ HUNTER_IO_VERIFY_URL = "https://api.hunter.io/v2/email-verifier?email={email}&ap
 
 # link to welinkinfo.com
 WELEAKINFO_URL = "https://api.weleakinfo.com/v3/public/email/{}"
+
+# get the reputation of the email address
+EMAILREP_IO_LINK = "https://emailrep.io/{}"
 
 # our user agent because who doesn't love a good user agent?
 USER_AGENT = "Breach-Reporter/{} (Language={}; Platform={})".format(

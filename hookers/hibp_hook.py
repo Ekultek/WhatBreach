@@ -1,4 +1,5 @@
 from time import sleep
+
 import arrow
 import requests
 
@@ -11,12 +12,14 @@ from lib.settings import (
     HIBP_URL,
     HIBP_PASTE_URL,
     DEFAULT_REQUEST_HEADERS,
+    grab_random_user_agent,
+    RANDOM_USER_AGENT_PATH
 )
 
 
 class BeenPwnedHook(object):
 
-    def __init__(self, email, headers=False, proxies=False):
+    def __init__(self, email, headers=False, proxies=False, blocked=1):
         if not proxies:
             proxies = {}
         if not headers:
@@ -25,6 +28,12 @@ class BeenPwnedHook(object):
         self.headers = headers
         self.proxies = proxies
         self.content = None
+        self.blocked = blocked
+        self.max_attempts = 3
+        self.status_codes = {
+            "blocked": 403,
+            "throttled": 429
+        }
 
     def _get_breach_names(self, is_paste=False):
         """
@@ -49,18 +58,36 @@ class BeenPwnedHook(object):
         """
         try:
             req = requests.get(
-                HIBP_URL.format(self.email), headers=self.headers, proxies=self.proxies
+                HIBP_URL.format(self.email),
+                headers={"User-Agent": grab_random_user_agent(RANDOM_USER_AGENT_PATH)},
+                proxies=self.proxies
             )
-            if req.status_code == 429:
+            if req.status_code == self.status_codes["throttled"]:
                 wait_time = int(req.headers["Retry-After"])
                 human = arrow.now().shift(seconds=wait_time).humanize()
                 warn("HIBP Rate Limit Exceeded, trying again in {}".format(human))
                 sleep(wait_time)
                 info("here we go!")
                 self.account_hooker()
-            elif req.status_code == 403:
-                error("you have been blocked from HIBP, try again later or change your IP address")
-                exit(1)
+            elif req.status_code == self.status_codes["blocked"]:
+                if self.blocked != self.max_attempts:
+                    warn(
+                        "you have been blocked from HIBP, WhatBreach will try {} more time(s)".format(
+                            self.max_attempts - self.blocked
+                        )
+                    )
+                    sleep(10)
+                    BeenPwnedHook(
+                        self.email, headers=self.headers,
+                        proxies=self.proxies, blocked=self.blocked + 1
+                    ).account_hooker()
+                else:
+                    error(
+                        "you have been blocked, {} attempts have failed, change your IP address and try again".format(
+                            self.max_attempts
+                        )
+                    )
+                    exit(1)
             else:
                 self.content = req.json()
             if self.content is not None or self.content != "":
