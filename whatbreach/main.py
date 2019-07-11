@@ -106,20 +106,28 @@ def main():
                     tmp = set()
                     results = searcher.hooker()
                     if results is not None:
-                        original_length = len(account_dumps)
-                        for item in account_dumps:
-                            tmp.add(item)
-                        for item in results:
-                            tmp.add(item)
-                        account_dumps = list(tmp)
-                        new_length = len(account_dumps)
-                        amount_discovered = new_length - original_length
-                        if amount_discovered != 0:
-                            info(
-                                "discovered a total of {} more breaches from weleakinfo.com".format(
-                                    new_length - original_length
+                        if account_dumps is not None:
+                            original_length = len(account_dumps)
+                        else:
+                            original_length = 0
+                        if account_dumps is not None:
+                            for item in account_dumps:
+                                tmp.add(item)
+                        if results is not None:
+                            for item in results:
+                                tmp.add(item)
+                        if len(tmp) != 0:
+                            account_dumps = list(tmp)
+                            new_length = len(account_dumps)
+                            amount_discovered = new_length - original_length
+                            if amount_discovered != 0:
+                                info(
+                                    "discovered a total of {} more breaches from weleakinfo.com".format(
+                                        new_length - original_length
+                                    )
                                 )
-                            )
+                            else:
+                                warn("did not discover any breaches")
                         else:
                             warn("did not discover any new databases from weleakinfo.com")
                     else:

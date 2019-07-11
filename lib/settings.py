@@ -12,7 +12,7 @@ from hookers.pastebin_hook import PastebinRawHook
 
 
 # version number
-VERSION = "0.1.5"
+VERSION = "0.1.6"
 
 # sexy banner
 BANNER = """{color_scheme_1}
@@ -174,8 +174,9 @@ def check_ten_minute_email(email, path):
         search_dump = data.read()
         current_ext = email.split("@")[-1]
         searcher = re.compile(current_ext, re.I)
-        if searcher.search(search_dump) is not None:
-            return True
+        for item in search_dump.split("\n"):
+            if searcher.match(item) is not None:
+                return True
     return False
 
 
