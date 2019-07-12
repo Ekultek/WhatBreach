@@ -44,12 +44,15 @@ class BeenPwnedHook(object):
             identifier = ["Id", u"Id"]
         else:
             identifier = ["Name", u"Name"]
-        for report in self.content:
-            try:
-                for item in identifier:
-                    report_names.add(report[item])
-            except Exception:
-                pass
+        if self.content is not None:
+            for report in self.content:
+                try:
+                    for item in identifier:
+                        report_names.add(report[item])
+                except Exception:
+                    pass
+        else:
+            return None
         return list(report_names)
 
     def account_hooker(self):
@@ -87,11 +90,12 @@ class BeenPwnedHook(object):
                             self.max_attempts
                         )
                     )
-                    exit(1)
             else:
                 self.content = req.json()
             if self.content is not None or self.content != "":
                 return self._get_breach_names()
+            else:
+                return None
         except ValueError:
             # this means something went wrong
             return None

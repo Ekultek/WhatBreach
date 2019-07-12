@@ -26,7 +26,7 @@ class WeLeakInfoHook(object):
             req = requests.get(WELEAKINFO_URL.format(self.email), proxies=self.proxies, headers=self.headers)
             return req.json()
         except Exception:
-            print {}
+            return {}
 
     def _parse_results(self, content):
         """
@@ -48,7 +48,7 @@ class WeLeakInfoHook(object):
         # pssst, if you're reading this create an issue titled `fat clunky penguins` and you'll be my best friend
         # hi btw :D
         results = self._make_request()
-        if len(results) != 0:
+        if results is not None and len(results) != 0:
             return self._parse_results(results['Data'])
         else:
             return None
