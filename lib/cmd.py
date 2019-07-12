@@ -51,6 +51,10 @@ class Parser(argparse.ArgumentParser):
 
         misc_opts = parser.add_argument_group("misc opts")
         misc_opts.add_argument(
+            "--do-retry", action="store_true", default=False, dest="retryOnFail",
+            help="Retry requests to HIBP if they the first one fails"
+        )
+        misc_opts.add_argument(
             "-dP", "--download-pastes", action="store_true", default=False, dest="downloadPastes",
             help="Download pastes associated with the email address found (if any)"
         )

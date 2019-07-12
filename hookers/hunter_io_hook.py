@@ -45,7 +45,13 @@ class HunterIoHook(object):
                     proxies=self.proxies, headers=self.headers
                 )
                 results = json.loads(req.text)["data"]["result"]
-                info("result of verification: {}".format(str(results)))
+                if str(results) == "risky":
+                    output_str = "\033[31m{}\033[0m".format(str(results))
+                elif str(results) == "deliverable":
+                    output_str = "\033[32m{}\033[0m".format(str(results))
+                else:
+                    output_str = "\033[33m{}\[033[0m".format(str(results))
+                info("result of verification: {}".format(output_str))
             except:
                 error("error verifying email: {}".format(email))
 

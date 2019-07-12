@@ -19,7 +19,7 @@ from lib.settings import (
 
 class BeenPwnedHook(object):
 
-    def __init__(self, email, headers=False, proxies=False, blocked=1):
+    def __init__(self, email, headers=False, proxies=False, blocked=1, retry=False):
         if not proxies:
             proxies = {}
         if not headers:
@@ -30,6 +30,7 @@ class BeenPwnedHook(object):
         self.content = None
         self.blocked = blocked
         self.max_attempts = 3
+        self.retry = retry
         self.status_codes = {
             "blocked": 403,
             "throttled": 429
@@ -74,16 +75,22 @@ class BeenPwnedHook(object):
                 self.account_hooker()
             elif req.status_code == self.status_codes["blocked"]:
                 if self.blocked != self.max_attempts:
-                    warn(
-                        "you have been blocked from HIBP, WhatBreach will try {} more time(s)".format(
-                            self.max_attempts - self.blocked
+                    if self.retry:
+                        warn(
+                            "you have been blocked from HIBP, WhatBreach will try {} more time(s)".format(
+                                self.max_attempts - self.blocked
+                            )
                         )
-                    )
-                    sleep(10)
-                    BeenPwnedHook(
-                        self.email, headers=self.headers,
-                        proxies=self.proxies, blocked=self.blocked + 1
-                    ).account_hooker()
+                        sleep(10)
+                        BeenPwnedHook(
+                            self.email, headers=self.headers,
+                            proxies=self.proxies, blocked=self.blocked + 1
+                        ).account_hooker()
+                    else:
+                        error(
+                            "you have been blocked from HIBP, skipping and continuing, pass the `--do-retry` flag to "
+                            "retry the requests on failure (max of 3 retries will be attempted)"
+                        )
                 else:
                     error(
                         "you have been blocked, {} attempts have failed, change your IP address and try again".format(
