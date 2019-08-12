@@ -12,14 +12,12 @@ from lib.settings import (
     HIBP_URL,
     HIBP_PASTE_URL,
     DEFAULT_REQUEST_HEADERS,
-    grab_random_user_agent,
-    RANDOM_USER_AGENT_PATH
 )
 
 
 class BeenPwnedHook(object):
 
-    def __init__(self, email, api_key, headers=False, proxies=False, blocked=1, retry=False):
+    def __init__(self, email, api_key, opt, headers=False, proxies=False, blocked=1, retry=False):
         if not proxies:
             proxies = {}
         if not headers:
@@ -35,6 +33,7 @@ class BeenPwnedHook(object):
             "blocked": 403,
             "throttled": 429
         }
+        self.opt = opt
         self.headers["hibp-api-key"] = api_key
 
     def _get_breach_names(self, is_paste=False):
@@ -70,7 +69,10 @@ class BeenPwnedHook(object):
             if req.status_code == self.status_codes["throttled"]:
                 wait_time = int(req.headers["Retry-After"])
                 human = arrow.now().shift(seconds=wait_time).humanize()
-                warn("HIBP Rate Limit Exceeded, trying again in {}".format(human))
+                warn(
+                    "".format(human, self.opt.throttleRequests)
+                )
+                self.opt.throttleRequests += wait_time
                 sleep(wait_time)
                 info("here we go!")
                 self.account_hooker()
@@ -84,7 +86,7 @@ class BeenPwnedHook(object):
                         )
                         sleep(10)
                         BeenPwnedHook(
-                            self.email, headers=self.headers,
+                            self.email, self.headers["hibp-api-key"], self.opt, headers=self.headers,
                             proxies=self.proxies, blocked=self.blocked + 1
                         ).account_hooker()
                     else:

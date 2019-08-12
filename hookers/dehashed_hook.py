@@ -72,4 +72,3 @@ class DehashedHook(object):
             return self._parse_html()
         else:
             return None
-

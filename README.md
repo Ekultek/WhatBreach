@@ -59,7 +59,6 @@ misc opts:
                         instead of the `HOME` path
   --throttle TIME       Throttle the HIBP requests to help prevent yourself
                         from being blocked
-
 ```
 
 Simple email search:

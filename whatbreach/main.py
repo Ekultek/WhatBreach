@@ -108,13 +108,13 @@ def main():
                     time.sleep(opt.throttleRequests)
                 info("searching breached accounts on HIBP related to: {}".format(email))
                 account_dumps = BeenPwnedHook(
-                    email, api_tokens["haveibeenpwned.com"], retry=opt.retryOnFail
+                    email, api_tokens["haveibeenpwned.com"], opt, retry=opt.retryOnFail
                 ).account_hooker()
                 info("searching for paste dumps on HIBP related to: {}".format(email))
 
                 if opt.searchPastebin:
                     paste_dumps = BeenPwnedHook(
-                        email, api_tokens["haveibeenpwned.com"], retry=opt.retryOnFail
+                        email, api_tokens["haveibeenpwned.com"], opt, retry=opt.retryOnFail
                     ).paste_hooker()
                 else:
                     warn("suppressing discovered pastes")
