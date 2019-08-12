@@ -2,7 +2,7 @@
 
 WhatBreach is an OSINT tool that simplifies the task of discovering what breaches an email address has been discovered in. WhatBreach provides a simple and effective way to search either multiple, or a single email address and discover all known breaches that this email has been seen in. From there WhatBreach is capable of downloading the database if it is publicly available, downloading the pastes the email was seen in, or searching the domain of the email for further investigation. To perform this task successfully WhatBreach takes advantage of the following websites and/or API's:
 
- - WhatBreach takes advantage of [haveibeenpwned.com](https://haveibeenpwned.com/)'s open API. It is free, quick, and reliable and provides a good list to start with
+ - WhatBreach takes advantage of [haveibeenpwned.com](https://haveibeenpwned.com/)'s API. HIBP's API is no longer free and costs 3.50 USD per month. To get an API key please see [here](https://haveibeenpwned.com/API/Key)
  - WhatBreach takes advantage of [dehashed.com](https://dehashed.com/) in order to discover if the database has been seen in a breach before. WhatBreach provides a link to a dehashed search for effective downloading
  - WhatBreach takes advantage of [hunter.io](https://hunter.io/)'s API (requires free API token) this allows simple and effective domain searching and will provide further information on the domain being searched along with store the discovered results in a file for later processing
  - WhatBreach takes advantage of pastes from [pastebin.com](https://pastebin.com/) that have been found from HIBP. It will also provide a link to the paste that the breach was seen in and is capable of downloading the raw paste if requested

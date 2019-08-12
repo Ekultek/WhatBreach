@@ -19,7 +19,7 @@ from lib.settings import (
 
 class BeenPwnedHook(object):
 
-    def __init__(self, email, headers=False, proxies=False, blocked=1, retry=False):
+    def __init__(self, email, api_key, headers=False, proxies=False, blocked=1, retry=False):
         if not proxies:
             proxies = {}
         if not headers:
@@ -35,6 +35,7 @@ class BeenPwnedHook(object):
             "blocked": 403,
             "throttled": 429
         }
+        self.headers["hibp-api-key"] = api_key
 
     def _get_breach_names(self, is_paste=False):
         """
@@ -63,7 +64,7 @@ class BeenPwnedHook(object):
         try:
             req = requests.get(
                 HIBP_URL.format(self.email),
-                headers={"User-Agent": grab_random_user_agent(RANDOM_USER_AGENT_PATH)},
+                headers=self.headers,
                 proxies=self.proxies
             )
             if req.status_code == self.status_codes["throttled"]:

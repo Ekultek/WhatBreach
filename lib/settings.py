@@ -12,7 +12,7 @@ from hookers.pastebin_hook import PastebinRawHook
 
 
 # version number
-VERSION = "0.1.9"
+VERSION = "0.2"
 
 # sexy banner
 BANNER = """{color_scheme_1}
@@ -48,10 +48,10 @@ JSON_DATA_DUMPS = "{}/json_dumps".format(DOWNLOADS_PATH)
 TOKENS_PATH = "{}/tokens".format(HOME)
 
 # have you been pwned?!
-HIBP_URL = "https://haveibeenpwned.com/api/v2/breachedaccount/{}"
+HIBP_URL = "https://haveibeenpwned.com/api/v3/breachedaccount/{}"
 
 # paste URL
-HIBP_PASTE_URL = "https://haveibeenpwned.com/api/v2/pasteaccount/{}"
+HIBP_PASTE_URL = "https://haveibeenpwned.com/api/v3/pasteaccount/{}"
 
 # dehashed search query
 DEHASHED_URL = "https://www.dehashed.com/search?query={}"
@@ -215,7 +215,7 @@ def grab_api_tokens():
     """
     tokens = {}
     filenames = (
-        "{}/hunter.io", "{}/weleakinfo.com"
+        "{}/hunter.io", "{}/weleakinfo.com", "{}/haveibeenpwned.com"
     )
     if not os.path.exists(TOKENS_PATH):
         os.makedirs(TOKENS_PATH)
