@@ -47,10 +47,13 @@ def main():
                 file_results = HunterIoHook(
                     opt.singleEmail, api_tokens["hunter.io"], verify_emails=opt.verifyEmailsThroughHunterIo
                 ).hooker()
-                with open(file_results) as data:
-                    emails = json.loads(data.read())["discovered_emails"]
-                for email in emails:
-                    to_search.append(email)
+                if file_results is not None:
+                    with open(file_results) as data:
+                        emails = json.loads(data.read())["discovered_emails"]
+                    for email in emails:
+                        to_search.append(email)
+                else:
+                    to_search.append(opt.singleEmail)
             elif opt.searchHunterIo and opt.emailFile is not None:
                 if not test_file(opt.emailFile):
                     error("unable to open filename, does it exist?")

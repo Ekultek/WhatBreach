@@ -1,6 +1,6 @@
 from time import sleep
 
-import arrow
+# import arrow
 import requests
 
 from lib.formatter import (
@@ -68,9 +68,10 @@ class BeenPwnedHook(object):
             )
             if req.status_code == self.status_codes["throttled"]:
                 wait_time = int(req.headers["Retry-After"])
-                human = arrow.now().shift(seconds=wait_time).humanize()
+                # we'll keep this in case we need it later
+                # human = arrow.now().shift(seconds=wait_time).humanize()
                 warn(
-                    "".format(human, self.opt.throttleRequests)
+                    "you've reached HIBP's request limit, adding {}s to throttle time".format(wait_time)
                 )
                 self.opt.throttleRequests += wait_time
                 sleep(wait_time)

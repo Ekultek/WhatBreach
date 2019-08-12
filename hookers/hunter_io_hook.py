@@ -50,7 +50,7 @@ class HunterIoHook(object):
                 elif str(results) == "deliverable":
                     output_str = "\033[32m{}\033[0m".format(str(results))
                 else:
-                    output_str = "\033[33m{}\[033[0m".format(str(results))
+                    output_str = "\033[33m{}\033[0m".format(str(results))
                 info("result of verification: {}".format(output_str))
             except:
                 error("error verifying email: {}".format(email))
@@ -83,6 +83,11 @@ class HunterIoHook(object):
         discovered_external_links = set()
         processed = json.loads(self.make_request())
         domain_name = self.__get_domain_from_email()
+        try:
+            processed['errors'][0]['id']
+            processed = None
+        except:
+            pass
         if processed is not None:
             try:
                 email_pattern_identification = "{}@{}".format(processed["data"]["pattern"], domain_name)
@@ -107,5 +112,5 @@ class HunterIoHook(object):
             )
             return file_path
         else:
-            error("error while processing domain: {}".format(domain_name))
+            error("error while processing domain: {} (have you exceeded your API limit?)".format(domain_name))
             return None
