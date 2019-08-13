@@ -6,10 +6,11 @@ from bs4 import BeautifulSoup
 
 from lib.formatter import (
     prompt,
+    warn,
     info
 )
 from lib.settings import (
-    DATABASES_URL,
+    # DATABASES_URL,
     DEFAULT_REQUEST_HEADERS,
     DOWNLOADS_PATH
 )
@@ -90,16 +91,97 @@ class DatabasesTodayHook(object):
         """
         hookers gonna hook
         """
-        try:
-            req = requests.get(DATABASES_URL.format(self.query.lower()), headers=self.headers, proxies=self.proxies)
-            soup = BeautifulSoup(req.content, "html.parser")
-            self.content = soup.extract()
-            results = self._parse_html()
-            if results:
-                self._find_database_links()
-                if len(self.database_links) != 0:
-                    return self._download_database()
-            else:
-                return []
-        except Exception:
-            return []
+        warn(
+            "databases.today is down, switching to wayback machine (this isn't as reliable but it will still work)"
+        )
+        return WayBackMachine(
+            self.query, self.proxies, self.headers
+        ).hooker()
+        # try:
+        #     req = requests.get(DATABASES_URL.format(self.query.lower()), headers=self.headers, proxies=self.proxies)
+        #     soup = BeautifulSoup(req.content, "html.parser")
+        #     self.content = soup.extract()
+        #     results = self._parse_html()
+        #     if results:
+        #         self._find_database_links()
+        #         if len(self.database_links) != 0:
+        #             return self._download_database()
+        #     else:
+        #         return []
+        # except Exception as e:
+        #     return []
+
+
+class WayBackMachine(object):
+
+    # fix until databases.today comes back online, not as reliable but will still work
+
+    def __init__(self, query, proxies=False, headers=False, **kwargs):
+        if not proxies:
+            proxies = {}
+        if not headers:
+            headers = DEFAULT_REQUEST_HEADERS
+        self.query = query
+        self.proxies = proxies
+        self.headers = headers
+        self.content = None
+        self.downloaded_databases = []
+        self.database_links = []
+        self.downloads_directory = kwargs.get("downloads_directory", None)
+
+    def _gather_database_urls(self):
+        retval = []
+        search_urls = (
+            "https://web.archive.org/web/20190409132908/https://cdn.databases.today/",
+            "https://web.archive.org/web/20190409132908/https://cdn.databases.today/random",
+            "https://web.archive.org/web/20190126112059/http://cdn.databases.today/random/dumps/",
+            "https://web.archive.org/web/20190115081847/http://cdn.databases.today/random/files/",
+            "https://web.archive.org/web/20190127002452/http://cdn.databases.today/random/github/",
+            "https://web.archive.org/web/20190115210749/http://cdn.databases.today/random/minecraft/",
+            "https://web.archive.org/web/20190124232905/http://cdn.databases.today/random/unverified/",
+            "https://web.archive.org/web/20190115210130/http://cdn.databases.today/random/vbulletindump/"
+        )
+        for link in search_urls:
+            try:
+                req = requests.get(link, headers=self.headers, proxies=self.proxies)
+                retval.append((req.content, link))
+            except:
+                retval.append((None, None))
+        return retval
+
+    def _get_links(self, content):
+        urls = []
+        for item in content:
+            if item[0] is not None:
+                soup = BeautifulSoup(item[0], "html.parser")
+                for href in soup.findAll('a'):
+                    try:
+                        urls.append("{}{}".format(item[1], href['href']))
+                    except:
+                        pass
+        return urls
+
+    def _check_if_matched(self, urls):
+        matched_urls = []
+        for url in urls:
+            searcher = re.compile(self.query, re.I)
+            if searcher.search(url) is not None:
+                matched_urls.append(url)
+        return matched_urls
+
+    def hooker(self):
+        """
+        temporary hookers gonna hook harder than normal hookers
+        """
+        content = self._gather_database_urls()
+        links = self._get_links(content)
+        matched_databases = self._check_if_matched(links)
+        if len(matched_databases) != 0:
+            info(
+                'found a total of {} databases(s) that matched the query, dumping URL list'.format(
+                    len(matched_databases)
+                )
+            )
+            for db in matched_databases:
+                print("~~> {}".format(db))
+        return []
