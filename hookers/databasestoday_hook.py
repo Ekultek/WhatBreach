@@ -151,12 +151,13 @@ class WayBackMachine(object):
 
     def _get_links(self, content):
         urls = []
+
         for item in content:
             if item[0] is not None:
                 soup = BeautifulSoup(item[0], "html.parser")
                 for href in soup.findAll('a'):
                     try:
-                        urls.append("{}{}".format(item[1], href['href']))
+                        urls.append("{}".format(href['href']))
                     except:
                         pass
         return urls
@@ -183,5 +184,5 @@ class WayBackMachine(object):
                 )
             )
             for db in matched_databases:
-                print("~~> {}".format(db))
+                print("\t~~> {}".format(db))
         return []
