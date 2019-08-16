@@ -310,3 +310,4 @@ During my time in information technology, during researching and doing OSINT, I 
 # Shoutouts
 
  - [NullArray](https://github.com/NullArray) for providing me with the idea for the hash checking and the idea for the databases.today downloads, as well as being an awesome and supportive person at all times.
+ - [khast3x](https://github.com/khast3x) (or as you know him the creator of [h8mail](https://github.com/khast3x/h8mail)) for being supportive and and overall enjoyable person. The best way to find the data in the databases downloaded from this tool is to use [h8mail](https://github.com/khast3x/h8mail), it's quick, efficient, and easy. Go check it out.
