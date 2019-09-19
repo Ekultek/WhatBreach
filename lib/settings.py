@@ -12,7 +12,7 @@ from hookers.pastebin_hook import PastebinRawHook
 
 
 # version number
-VERSION = "0.2.3"
+VERSION = "0.2.5"
 
 # sexy banner
 BANNER = """{color_scheme_1}
@@ -64,6 +64,12 @@ HUNTER_IO_URL = "https://api.hunter.io/v2/domain-search?domain={domain}&api_key=
 
 # api link to verify email status
 HUNTER_IO_VERIFY_URL = "https://api.hunter.io/v2/email-verifier?email={email}&api_key={api_key}"
+
+# snusbase
+SNUSBASE_URL_DICT = {
+    "login": "https://snusbase.com/login",
+    "search": "https://snusbase.com/search"
+}
 
 # link to welinkinfo.com
 WELEAKINFO_URL = "https://api.weleakinfo.com/v3/public/email/{}"
@@ -121,15 +127,15 @@ def display_found_databases(data, overflow=23, is_downloaded=False, download_pas
                 tmp.append(data[item])
         sep = "-" * len(max(tmp, key=len)) + "-" * overflow
         print(sep)
-        output_template = "{0:20} | {1:30}"
-        print("\033[99;4mBreach/Paste:\033[0m\t{}|{}\033[99;4mDatabase/Paste Link:\033[0m".format(" " * 5, " "))
+        output_template = "{0:25} | {1:35}"
+        print("\033[99;4mBreach/Paste:\033[0m\t{}|{}\033[99;4mDatabase/Paste Link:\033[0m".format(" " * 10, " "))
         for i, key in enumerate(data.keys(), start=1):
             original_key = str(key)
             do_show_key = False
             key = str(key)
             if type(data[key]) == tuple:
                 result, search_url = data[key][0], data[key][-1]
-                if len(key) >= 19:
+                if len(key) >= 15:
                     display_key = key[0:15] + "..."
                     do_show_key = True
                 if result:
@@ -215,20 +221,33 @@ def grab_api_tokens():
     """
     tokens = {}
     filenames = (
-        "{}/hunter.io", "{}/weleakinfo.com", "{}/haveibeenpwned.com"
+        "{}/hunter.io", "{}/weleakinfo.com", "{}/haveibeenpwned.com", "{}/snusbase.com"
     )
     if not os.path.exists(TOKENS_PATH):
         os.makedirs(TOKENS_PATH)
     for f in filenames:
         if not os.path.exists(f.format(TOKENS_PATH)):
             with open(f.format(TOKENS_PATH), 'a+') as token:
-                item = lib.formatter.prompt(
-                    "you have not provided a token for {}, enter token".format(f.split("/")[-1]), lowercase=False
-                )
-                token.write(item.strip())
+                if "snusbase" in f:
+                    username = lib.formatter.prompt(
+                        "enter your username for snusbase", lowercase=False
+                    )
+                    password = lib.formatter.prompt(
+                        "enter your snusbase password", lowercase=False
+                    )
+                    results = {"username": username, "password": password}
+                    json.dump(results, token)
+                else:
+                    item = lib.formatter.prompt(
+                        "you have not provided a token for {}, enter token".format(f.split("/")[-1]), lowercase=False
+                    )
+                    token.write(item.strip())
         with open(f.format(TOKENS_PATH)) as data:
             token_identifier = f.split("/")[-1]
-            tokens[token_identifier] = data.read().strip()
+            if "snusbase" in f:
+                tokens[token_identifier] = json.load(data)
+            else:
+                tokens[token_identifier] = data.read().strip()
     return tokens
 
 

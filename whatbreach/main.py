@@ -9,6 +9,7 @@ from hookers.hibp_hook import BeenPwnedHook
 from hookers.dehashed_hook import DehashedHook
 from hookers.databasestoday_hook import DatabasesTodayHook
 from hookers.emailrep_io_hook import EmailRepHook
+from hookers.snusbase_hooker import SnusbaseHooker
 from lib.settings import (
     test_file,
     BANNER,
@@ -154,9 +155,24 @@ def main():
                         else:
                             warn("did not discover any new databases from weleakinfo.com")
                     else:
-                        warn("unable to search weleakinfo.com is your API key correct?")
+                        warn("no databases discovered on weleakinfo")
 
-                if account_dumps is not None and paste_dumps is not None:
+                if opt.searchSnusBase:
+                    info("searching snusbase.com for breaches related to '{}'".format(email))
+                    snusbase_leaks = SnusbaseHooker(
+                        email, api_tokens["snusbase.com"]["username"],
+                        api_tokens["snusbase.com"]["password"]
+                    ).main()
+                    if snusbase_leaks is not None and len(snusbase_leaks) != 0:
+                        info("found a total of {} more leaks using snusbase".format(len(snusbase_leaks)))
+                        for item in snusbase_leaks:
+                            account_dumps.append(item)
+                            set(account_dumps)
+                            account_dumps = list(account_dumps)
+                    else:
+                        warn("did not find anymore leaks using snusbase")
+
+                if account_dumps is not None and paste_dumps is not None and len(account_dumps) != 0:
                     info(
                         "found a total of {} database breach(es) and a total of {} paste(s) pertaining to: {}".format(
                             len(account_dumps), len(paste_dumps), email
@@ -198,7 +214,7 @@ def main():
                                         )
                                     )
 
-                elif account_dumps is not None and paste_dumps is None:
+                elif account_dumps is not None and paste_dumps is None and len(account_dumps) != 0:
                     info("found a total of {} database breach(es) pertaining to: {}".format(len(account_dumps), email))
                     if opt.searchDehashed:
                         if len(account_dumps) > 20:

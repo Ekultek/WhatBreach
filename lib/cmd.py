@@ -45,6 +45,10 @@ class Parser(argparse.ArgumentParser):
             help="Check the profiles associated with an email address"
         )
         search_opts.add_argument(
+            "-sB", "--snusbase", action="store_true", default=False, dest="searchSnusBase",
+            help="Search snusbasae.com for more leaks with a provided email address"
+        )
+        search_opts.add_argument(
             "-c", "--cookie", metavar="DEHASHED-COOKIE", dest="dehashedCookie",
             help=argparse.SUPPRESS
         )

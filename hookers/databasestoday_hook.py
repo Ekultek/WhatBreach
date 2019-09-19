@@ -136,7 +136,11 @@ class WayBackMachine(object):
             "https://web.archive.org/web/20190409132908/https://cdn.databases.today/random",
             "https://web.archive.org/web/20190126112059/http://cdn.databases.today/random/dumps/",
             "https://web.archive.org/web/20190115081847/http://cdn.databases.today/random/files/",
-            "https://web.archive.org/web/20190127002452/http://cdn.databases.today/random/github/",
+            "https://web.archive.org/web/20190128131503/http://cdn.databases.today/random/github/DevGames/",
+            "https://web.archive.org/web/20190128131528/http://cdn.databases.today/random/github/Devin148/",
+            "https://web.archive.org/web/20190128131538/http://cdn.databases.today/random/github/WiseXP/",
+            "https://web.archive.org/web/20190128131619/http://cdn.databases.today/random/github/chre/",
+            "https://web.archive.org/web/20190128131637/http://cdn.databases.today/random/github/leonardoipx/",
             "https://web.archive.org/web/20190115210749/http://cdn.databases.today/random/minecraft/",
             "https://web.archive.org/web/20190124232905/http://cdn.databases.today/random/unverified/",
             "https://web.archive.org/web/20190115210130/http://cdn.databases.today/random/vbulletindump/"
