@@ -3,3 +3,4 @@
 venv/*
 env
 .DS_Store
+venv3/*

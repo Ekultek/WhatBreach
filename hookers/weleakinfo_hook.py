@@ -51,8 +51,7 @@ class WeLeakInfoHook(object):
         if results is not None and len(results) != 0:
             try:
                 return self._parse_results(results['Data'])
-            except Exception as e:
-                print e
+            except Exception:
                 return None
         else:
             return None

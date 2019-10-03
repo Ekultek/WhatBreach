@@ -44,6 +44,5 @@ class EmailRepHook(object):
         try:
             req = requests.get(EMAILREP_IO_LINK.format(self.email), proxies=self.proxies, headers=self.headers)
             return self._parse_results(req.json())
-        except Exception as e:
-            print e
+        except Exception:
             return None
