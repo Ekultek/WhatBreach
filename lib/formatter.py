@@ -17,7 +17,7 @@ def error(string):
 
 
 def prompt(string, lowercase=True):
-    question = raw_input(
+    question = input(
         "[ ? ] {}: ".format(
             string
         )

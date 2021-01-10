@@ -7,11 +7,10 @@ WhatBreach is an OSINT tool that simplifies the task of discovering what breache
  - WhatBreach takes advantage of [hunter.io](https://hunter.io/)'s API (requires free API token) this allows simple and effective domain searching and will provide further information on the domain being searched along with store the discovered results in a file for later processing
  - WhatBreach takes advantage of pastes from [pastebin.com](https://pastebin.com/) that have been found from HIBP. It will also provide a link to the paste that the breach was seen in and is capable of downloading the raw paste if requested
  - WhatBreach takes advantage of [databases.today](https://databases.today/) to download the databases off the website. This allows a simple and effective way of downloading databases without having to search manually
- - WhatBreach takes advantage of [weleakinfo.com](https://weleakinfo.com/)'s API (requires free API token) this provides an extra search for the email in order to discover even more public breaches
  - WhatBreach takes advantage of [emailrep.io](https://emailrep.io/)'s simple open API to search for possible profiles associated with an email, it also dumps all information discovered into a file for further processing
 
 Some interesting features of WhatBreach include the following:
- 
+
  - Ability to detect if the email is a ten minute email or not and prompt to process it or not
  - Check the email for deliverable status using hunter.io
  - Ability to throttle the requests in order to help prevent HIBP from blocking you
@@ -40,8 +39,6 @@ search opts:
   -sH, --search-hunter  Search hunter.io with a provided email address and
                         query for all information, this will process all
                         emails found as normal
-  -wL, --search-weleakinfo
-                        Search weleakinfo.com as well as HIBP for results
 
 misc opts:
   -dP, --download-pastes
@@ -65,7 +62,7 @@ Simple email search:
 ```
 python whatbreach.py -e user1337@gmail.com
 
-	                                                    _____ 
+	                                                    _____
 	   _ _ _ _       _   _____                 _       |___  |
 	  | | | | |_ ___| |_| __  |___ ___ ___ ___| |_       |  _|
 	  | | | |   | .'|  _| __ -|  _| -_| .'|  _|   |      |_|  
@@ -91,11 +88,11 @@ OnlinerSpambot       | N/A
 ---------------------------------------------------------------------------
 ```
 
-Searching with weleakinfo and haveibeenpwned:
+Searching with haveibeenpwned:
 ```
 python whatbreach.py -e user1337@gmail.com -wL
 
-	                                                    _____ 
+	                                                    _____
 	   _ _ _ _       _   _____                 _       |___  |
 	  | | | | |_ ___| |_| __  |___ ___ ___ ___| |_       |  _|
 	  | | | |   | .'|  _| __ -|  _| -_| .'|  _|   |      |_|  
@@ -106,8 +103,6 @@ python whatbreach.py -e user1337@gmail.com -wL
 [ i ] starting search on single email address: user1337@gmail.com
 [ i ] searching breached accounts on HIBP related to: user1337@gmail.com
 [ i ] searching for paste dumps on HIBP related to: user1337@gmail.com
-[ i ] searching weleakinfo.com for breaches related to: user1337@gmail.com
-[ i ] discovered a total of 12 more breaches from weleakinfo.com
 [ i ] found a total of 21 database breach(es) pertaining to: user1337@gmail.com
 [ w ] large amount of database breaches, obtaining links from dehashed (this may take a minute)
 -------------------------------------------------------------------------------
@@ -140,7 +135,7 @@ Downloading public databases:
 ```
 python whatbreach.py -e user1337@gmail.com -d
 
-	                                                    _____ 
+	                                                    _____
 	   _ _ _ _       _   _____                 _       |___  |
 	  | | | | |_ ___| |_| __  |___ ___ ___ ___| |_       |  _|
 	  | | | |   | .'|  _| __ -|  _| -_| .'|  _|   |      |_|  
@@ -194,7 +189,7 @@ Using hunter.io for domain hunting and throttling the requests to attempt preven
 ```
 python whatbreach.py -e user1337@fbi.com -sH --throttle 35
 
-	                                                    _____ 
+	                                                    _____
 	   _ _ _ _       _   _____                 _       |___  |
 	  | | | | |_ ___| |_| __  |___ ___ ___ ___| |_       |  _|
 	  | | | |   | .'|  _| __ -|  _| -_| .'|  _|   |      |_|  
@@ -244,9 +239,9 @@ python whatbreach.py -e user1337@fbi.com -sH --throttle 35
 
 Checking for ten minute emails:
 ```
-python whatbreach.py -l test.txt -cT 
+python whatbreach.py -l test.txt -cT
 
-	                                                    _____ 
+	                                                    _____
 	   _ _ _ _       _   _____                 _       |___  |
 	  | | | | |_ ___| |_| __  |___ ___ ___ ___| |_       |  _|
 	  | | | |   | .'|  _| __ -|  _| -_| .'|  _|   |      |_|  
@@ -279,7 +274,7 @@ Searching for profiles associated with the email:
 ```
 python whatbreach.py -e user@gmail.com -cA
 
-                                                            _____ 
+                                                            _____
            _ _ _ _       _   _____                 _       |___  |
           | | | | |_ ___| |_| __  |___ ___ ___ ___| |_       |  _|
           | | | |   | .'|  _| __ -|  _| -_| .'|  _|   |      |_|  

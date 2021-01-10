@@ -36,10 +36,7 @@ class Parser(argparse.ArgumentParser):
             help="Search hunter.io with a provided email address and query for all information, this "
                  "will process all emails found as normal"
         )
-        search_opts.add_argument(
-            "-wL", "--search-weleakinfo", action="store_true", default=False, dest="searchWeLeakInfo",
-            help="Search weleakinfo.com as well as HIBP for results"
-        )
+
         search_opts.add_argument(
             "-cA", "--check-accounts", action="store_true", default=False, dest="checkEmailAccounts",
             help="Check the profiles associated with an email address"

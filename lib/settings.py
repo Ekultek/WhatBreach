@@ -71,9 +71,6 @@ SNUSBASE_URL_DICT = {
     "search": "https://snusbase.com/search"
 }
 
-# link to welinkinfo.com
-WELEAKINFO_URL = "https://api.weleakinfo.com/v3/public/email/{}"
-
 # get the reputation of the email address
 EMAILREP_IO_LINK = "https://emailrep.io/{}"
 
@@ -221,7 +218,7 @@ def grab_api_tokens():
     """
     tokens = {}
     filenames = (
-        "{}/hunter.io", "{}/weleakinfo.com", "{}/haveibeenpwned.com", "{}/snusbase.com"
+        "{}/hunter.io", "{}/haveibeenpwned.com", "{}/snusbase.com"
     )
     if not os.path.exists(TOKENS_PATH):
         os.makedirs(TOKENS_PATH)

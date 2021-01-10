@@ -3,7 +3,6 @@ import time
 import subprocess
 
 from lib.cmd import Parser
-from hookers.weleakinfo_hook import WeLeakInfoHook
 from hookers.hunter_io_hook import HunterIoHook
 from hookers.hibp_hook import BeenPwnedHook
 from hookers.dehashed_hook import DehashedHook
@@ -123,39 +122,6 @@ def main():
                 else:
                     warn("suppressing discovered pastes")
                     paste_dumps = []
-
-                if opt.searchWeLeakInfo:
-                    info("searching weleakinfo.com for breaches related to: {}".format(email))
-                    searcher = WeLeakInfoHook(email, api_tokens["weleakinfo.com"])
-                    tmp = set()
-                    results = searcher.hooker()
-                    if results is not None:
-                        if account_dumps is not None:
-                            original_length = len(account_dumps)
-                        else:
-                            original_length = 0
-                        if account_dumps is not None:
-                            for item in account_dumps:
-                                tmp.add(item)
-                        if results is not None:
-                            for item in results:
-                                tmp.add(item)
-                        if len(tmp) != 0:
-                            account_dumps = list(tmp)
-                            new_length = len(account_dumps)
-                            amount_discovered = new_length - original_length
-                            if amount_discovered != 0:
-                                info(
-                                    "discovered a total of {} more breaches from weleakinfo.com".format(
-                                        new_length - original_length
-                                    )
-                                )
-                            else:
-                                warn("did not discover any breaches")
-                        else:
-                            warn("did not discover any new databases from weleakinfo.com")
-                    else:
-                        warn("no databases discovered on weleakinfo")
 
                 if opt.searchSnusBase:
                     info("searching snusbase.com for breaches related to '{}'".format(email))
